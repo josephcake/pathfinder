@@ -2,12 +2,23 @@ import React from "react";
 import Tr from "./Tr";
 
 class Table extends React.Component {
-  shouldComponentUpdate() {
+  shouldComponentUpdate(nextProp, nextState) {
+    //   debugger;
+    //   if (this.props.ending !== nextProp.ending) {
+    //     return true;
+    //   }
     return false;
   }
   render() {
     const rowsData = [];
-    const { rows, cols, current, starting, ending } = this.props;
+    const {
+      rows,
+      cols,
+      current,
+      starting,
+      ending,
+      changeEndpoint
+    } = this.props;
 
     for (let i = 0; i < rows; i++) {
       rowsData.push(

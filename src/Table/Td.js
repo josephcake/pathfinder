@@ -3,12 +3,15 @@ import React from "react";
 
 class Td extends React.Component {
   shouldComponentUpdate(nextProp, nextState) {
-    const { r, c, current } = this.props;
-    const cell = `${r}-${c}`;
-    if (cell !== current) {
-      return false;
-    }
-    return true;
+    // const { r, c, current, ending } = this.props;
+    // const cell = `${r}-${c}`;
+    // if (cell === ending || nextProp.ending === cell) {
+    //   return true;
+    // }
+    // if (cell !== current) {
+    return false;
+    // }
+    // return true;
   }
 
   render() {

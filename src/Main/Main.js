@@ -9,9 +9,9 @@ class Main extends React.Component {
   render() {
     return (
       <TableContext.Consumer>
-        {({ rows, cols, starting, ending, current }) => {
+        {({ rows, cols, starting, ending, current, changeEndpoint }) => {
           return (
-            <div className={"main"}>
+            <div className={"main"} onClick={changeEndpoint}>
               <Table
                 rows={rows}
                 starting={starting}

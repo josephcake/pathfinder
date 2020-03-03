@@ -20,6 +20,7 @@ html {
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  cursor: url("http://www.rw-designer.com/cursor-extern.php?id=78057"), auto;
 }
 table {
   border-collapse: collapse;

@@ -3,11 +3,12 @@ import Td from "./Td";
 
 class Tr extends React.Component {
   shouldComponentUpdate(nextProp, nextState) {
+    // debugger;
     return false;
   }
 
   render() {
-    const { r, cols, current, starting, ending } = this.props;
+    const { r, cols, current, starting, ending, changeEndpoint } = this.props;
     const tds = [];
     for (let i = 0; i < cols; i++) {
       tds.push(
