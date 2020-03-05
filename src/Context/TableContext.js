@@ -5,11 +5,11 @@ import * as _ from "underscore";
 export const TableContext = createContext();
 export class TableContextProvider extends Component {
   state = {
-    starting: "20-20",
-    ending: "25-60",
-    rows: 40,
-    cols: 80,
-    current: "20-20",
+    starting: "15-10",
+    ending: "15-45",
+    rows: 30,
+    cols: 60,
+    current: "15-10",
     path: {},
     running: false
   };
@@ -27,130 +27,303 @@ export class TableContextProvider extends Component {
       func();
     }
   };
-  knownEndPointSearch = () => {
+  unknownEndPointSearch = () => {
     let current = this.state.current.split("-");
     let currentRow = Number(current[0]);
     let currentCol = Number(current[1]);
-
-    let endPoint = this.state.ending.split("-");
-    let endPointRow = Number(endPoint[0]);
-    let endPointCol = Number(endPoint[1]);
-    if (currentRow < endPointRow) {
-      this.goUp(this.knownEndPointSearch);
-    } else if (currentRow > endPointRow) {
-      this.goDown(this.knownEndPointSearch);
-    } else if (currentCol < endPointCol) {
-      this.goRight(this.knownEndPointSearch);
-    } else if (currentCol > endPointCol) {
-      this.goLeft(this.knownEndPointSearch);
+    if (currentRow !== 0) {
+      this.unknownGoUp(currentRow, currentCol);
+    } else {
+      this.unknownGoDown(currentRow, currentCol);
     }
   };
-  goUp = func => {
+
+  unknownGoUp = (cR, cC, path = {}) => {
+    // Color current
+    // console.log("up:", cR, cC, path);
     console.log("up");
+    const current = [cR, cC].join("-");
+    if (current === this.state.ending) {
+      return;
+    }
+    let currentCell = document.getElementById(current);
+    let nextRow = cR - 1;
+    if (cR === 0) {
+      if (!path[current]) {
+        currentCell.className = "visited";
+        path[String(current)] = true;
+      }
+      this.unknownGoRight(cR, cC + 1, path);
+    } else if (
+      currentCell.className === "visited" ||
+      currentCell.className === "starting"
+    ) {
+      this.unknownGoUp(nextRow, cC, path);
+    } else if (currentCell.className === "unvisited") {
+      setTimeout(() => {
+        currentCell.className = "visited";
+        path[String(current)] = true;
+        let next = cC + 1;
+        let nextId = [cR, next].join("-");
+        let nextCell = document.getElementById(nextId);
+        if (
+          nextCell.className === "visited" ||
+          nextCell.className === "starting"
+        ) {
+          this.unknownGoUp(nextRow, cC, path);
+        } else if (nextCell.className === "unvisited") {
+          this.unknownGoRight(cR, next, path);
+        }
+      }, 10);
+    }
+  };
+  unknownGoRight = (cR, cC, path = {}) => {
+    // console.log("right:", cR, cC, path);
+    // Color current
+    console.log("right");
+    const current = [cR, cC].join("-");
+    if (current === this.state.ending) {
+      return;
+    }
+    let currentCell = document.getElementById(current);
+    let nextCol = cC + 1;
+    if (cC === this.state.cols - 1) {
+      if (!path[current]) {
+        currentCell.className = "visited";
+        path[String(current)] = true;
+      }
+      this.unknownGoDown(cR + 1, cC, path);
+    } else if (
+      currentCell.className === "visited" ||
+      currentCell.className === "starting"
+    ) {
+      this.unknownGoRight(cR, nextCol, path);
+    } else if (currentCell.className === "unvisited") {
+      setTimeout(() => {
+        currentCell.className = "visited";
+        path[String(current)] = true;
+        let next = cR + 1;
+        let nextId = [next, cC].join("-");
+        let nextCell = document.getElementById(nextId);
+        if (
+          nextCell.className === "visited" ||
+          nextCell.className === "starting"
+        ) {
+          this.unknownGoRight(cR, nextCol, path);
+        } else if (nextCell.className === "unvisited") {
+          this.unknownGoDown(next, cC, path);
+        }
+      }, 10);
+    }
+  };
+  unknownGoDown = (cR, cC, path = {}) => {
+    // Color current
+    // console.log("down:", cR, cC, path);
+    console.log("down");
+    const current = [cR, cC].join("-");
+    if (current === this.state.ending) {
+      return;
+    }
+    let currentCell = document.getElementById(current);
+    let nextRow = cR + 1;
+    if (cR === this.state.rows - 1) {
+      if (!path[current]) {
+        currentCell.className = "visited";
+        path[String(current)] = true;
+      }
+      this.unknownGoLeft(cR, cC - 1, path);
+    } else if (
+      currentCell.className === "visited" ||
+      currentCell.className === "starting"
+    ) {
+      this.unknownGoDown(nextRow, cC, path);
+    } else if (currentCell.className === "unvisited") {
+      setTimeout(() => {
+        currentCell.className = "visited";
+        path[String(current)] = true;
+        let next = cC - 1;
+        let nextId = [cR, next].join("-");
+        let nextCell = document.getElementById(nextId);
+        if (
+          nextCell.className === "visited" ||
+          nextCell.className === "starting"
+        ) {
+          this.unknownGoDown(nextRow, cC, path);
+        } else if (nextCell.className === "unvisited") {
+          this.unknownGoLeft(cR, next, path);
+        }
+      }, 10);
+    }
+  };
+  unknownGoLeft = (cR, cC, path = {}) => {
+    console.log("left");
+    const current = [cR, cC].join("-");
+    if (current === this.state.ending) {
+      return;
+    }
+    let currentCell = document.getElementById(current);
+    let nextCol = cC - 1;
+    if (cC === 0) {
+      if (!path[current]) {
+        currentCell.className = "visited";
+        path[String(current)] = true;
+      }
+      this.unknownGoUp(cR - 1, cC, path);
+    } else if (
+      currentCell.className === "visited" ||
+      currentCell.className === "starting"
+    ) {
+      this.unknownGoLeft(cR, nextCol, path);
+    } else if (currentCell.className === "unvisited") {
+      setTimeout(() => {
+        currentCell.className = "visited";
+        path[String(current)] = true;
+        let next = cR - 1;
+        let nextId = [next, cC].join("-");
+        let nextCell = document.getElementById(nextId);
+        if (
+          nextCell.className === "visited" ||
+          nextCell.className === "starting"
+        ) {
+          this.unknownGoLeft(cR, nextCol, path);
+        } else if (nextCell.className === "unvisited") {
+          this.unknownGoUp(next, cC, path);
+        }
+      }, 10);
+    }
+  };
+
+  knownEndPointSearch = () => {
+    console.log("running parent:");
+    // debugger
     let current = this.state.current.split("-");
-    let currentRow = Number(current[0]);
-    let currentCol = Number(current[1]);
+    let cRow = Number(current[0]);
+    let cCol = Number(current[1]);
+    // debugger;
     let endPoint = this.state.ending.split("-");
-    let endPointRow = Number(endPoint[0]);
+    let eRow = Number(endPoint[0]);
+    let eCol = Number(endPoint[1]);
+    if (cRow < eRow) {
+      this.knownGoUp(this.knownEndPointSearch, cRow, cCol, eRow, eCol);
+    } else if (cRow > eRow) {
+      this.knownGoDown(this.knownEndPointSearch, cRow, cCol, eRow, eCol);
+    } else if (cCol < eCol) {
+      this.knownGoRight(this.knownEndPointSearch, cRow, cCol, eRow, eCol);
+    } else if (cCol > eCol) {
+      this.knownGoLeft(this.knownEndPointSearch, cRow, cCol, eRow, eCol);
+    }
+  };
+  knownGoUp = (func, currentRow, currentCol, endPointRow, endPointCol) => {
+    console.log("up");
 
     if (currentRow !== endPointRow) {
       let nextRow = currentRow + 1;
       let nextCurrent = [nextRow, currentCol].join("-");
-      let data = document.querySelector(`[data="${nextCurrent}"]`);
+      let data = document.getElementById(nextCurrent);
       data.className = "visited";
-      setTimeout(() => {
-        this.setState(
-          {
-            current: nextCurrent,
-            running: true
-          },
-          () => func()
-        );
-      }, 0);
-
-      // let newPath = this.state.path;
-      // newPath[nextCurrent] = true;
-      // this.setState(
-      //   {
-      //     path: newPath,
-      //     current: nextCurrent
-      //   },
-      //   () => {
-      //     func();
-      //   }
-      // );
+      if (nextRow === endPointRow) {
+        setTimeout(() => {
+          this.setState(
+            {
+              current: nextCurrent,
+              running: true
+            },
+            () => {
+              func();
+            }
+          );
+        }, 0);
+      } else {
+        setTimeout(() => {
+          this.knownGoUp(func, nextRow, currentCol, endPointRow, endPointCol);
+        }, 10);
+      }
     }
   };
-  goLeft = func => {
+  knownGoLeft = (func, currentRow, currentCol, endPointRow, endPointCol) => {
     console.log("left");
-    let current = this.state.current.split("-");
-    let currentRow = Number(current[0]);
-    let currentCol = Number(current[1]);
-    let endPoint = this.state.ending.split("-");
-    // let endPointRow = Number(endPoint[0]);
-    let endPointCol = Number(endPoint[1]);
     if (currentCol !== endPointCol) {
       let nextCol = currentCol - 1;
       let nextCurrent = [currentRow, nextCol].join("-");
-      let data = document.querySelector(`[data="${nextCurrent}"]`);
+      let data = document.getElementById(nextCurrent);
       data.className = "visited";
-      setTimeout(() => {
-        this.setState(
-          {
-            current: nextCurrent,
-            running: true
-          },
-          () => func()
-        );
-      }, 1);
+      if (nextCol === endPointCol) {
+        setTimeout(() => {
+          this.setState(
+            {
+              current: nextCurrent,
+              running: true
+            },
+            () => {
+              func();
+            }
+          );
+        }, 0);
+      } else {
+        setTimeout(() => {
+          this.knownGoLeft(func, currentRow, nextCol, endPointRow, endPointCol);
+        }, 10);
+      }
     }
   };
-  goRight = func => {
+  knownGoRight = (func, currentRow, currentCol, endPointRow, endPointCol) => {
     console.log("right");
-    let current = this.state.current.split("-");
-    let currentRow = Number(current[0]);
-    let currentCol = Number(current[1]);
-    let endPoint = this.state.ending.split("-");
-    // let endPointRow = Number(endPoint[0]);
-    let endPointCol = Number(endPoint[1]);
+
     if (currentCol !== endPointCol) {
       let nextCol = currentCol + 1;
       let nextCurrent = [currentRow, nextCol].join("-");
-      let data = document.querySelector(`[data="${nextCurrent}"]`);
+      let data = document.getElementById(nextCurrent);
       data.className = "visited";
-      setTimeout(() => {
-        this.setState(
-          {
-            current: nextCurrent,
-            running: true
-          },
-          () => func()
-        );
-      }, 1);
+      if (nextCol === endPointCol) {
+        setTimeout(() => {
+          this.setState(
+            {
+              current: nextCurrent,
+              running: true
+            },
+            () => {
+              func();
+            }
+          );
+        }, 0);
+      } else {
+        setTimeout(() => {
+          this.knownGoRight(
+            func,
+            currentRow,
+            nextCol,
+            endPointRow,
+            endPointCol
+          );
+        }, 10);
+      }
     }
   };
-  goDown = func => {
+  knownGoDown = (func, currentRow, currentCol, endPointRow, endPointCol) => {
     console.log("down");
-    let current = this.state.current.split("-");
-    let currentRow = Number(current[0]);
-    let currentCol = Number(current[1]);
-    let endPoint = this.state.ending.split("-");
-    let endPointRow = Number(endPoint[0]);
-
     if (currentRow !== endPointRow) {
       let nextRow = currentRow - 1;
       let nextCurrent = [nextRow, currentCol].join("-");
-      let data = document.querySelector(`[data="${nextCurrent}"]`);
+      let data = document.getElementById(nextCurrent);
       data.className = "visited";
-      setTimeout(() => {
-        this.setState(
-          {
-            current: nextCurrent,
-            running: true
-          },
-          () => func()
-        );
-      }, 1);
+      // debugger;
+      if (nextRow === endPointRow) {
+        setTimeout(() => {
+          this.setState(
+            {
+              current: nextCurrent,
+              running: true
+            },
+            () => {
+              func();
+            }
+          );
+        }, 0);
+      } else {
+        setTimeout(() => {
+          this.knownGoDown(func, nextRow, currentCol, endPointRow, endPointCol);
+        }, 10);
+      }
     }
   };
 
@@ -168,14 +341,14 @@ export class TableContextProvider extends Component {
 
   changeEndpoint = e => {
     // debugger;
-    let value = e.target.getAttribute("data");
+    let value = e.target.id;
     if (!value) {
       return;
     }
     if (value === this.state.starting || value === this.state.ending) {
       return;
     }
-    let nextEnding = document.querySelector(`[data="${value}"]`);
+    let nextEnding = document.getElementById(value);
     // let ending = document.querySelector(`[data="${this.state.ending}"]`);
     nextEnding.className = "ending";
     // ending.className = "";
@@ -192,6 +365,7 @@ export class TableContextProvider extends Component {
         value={{
           ...this.state,
           knownEndPointSearch: this.knownEndPointSearch,
+          unknownEndPointSearch: this.unknownEndPointSearch,
           checkRunningFunc: this.checkRunningFunc,
           changeEndpoint: this.changeEndpoint
         }}

@@ -26,7 +26,7 @@ class Td extends React.Component {
         ? "visited"
         : "unvisited";
     return (
-      <td className={classN} data={cell}>
+      <td className={classN} id={cell}>
         0
       </td>
     );
