@@ -5,14 +5,22 @@ class Nav extends React.Component {
   render() {
     return (
       <TableContext.Consumer>
-        {({ checkRunningFunc, knownEndPointSearch, unknownEndPointSearch }) => {
+        {({
+          checkRunningFunc,
+          knownEndPointSearch,
+          breadthFirstSearch,
+          depthFirstSearch
+        }) => {
           return (
             <div>
               <button onClick={() => checkRunningFunc(knownEndPointSearch)}>
                 Known Distance
               </button>
-              <button onClick={() => checkRunningFunc(unknownEndPointSearch)}>
-                Uknown Distance
+              <button onClick={() => checkRunningFunc(breadthFirstSearch)}>
+                Breadth First Search
+              </button>
+              <button onClick={() => checkRunningFunc(depthFirstSearch)}>
+                Depth First Search
               </button>
             </div>
           );

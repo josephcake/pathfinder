@@ -11,14 +11,7 @@ class Table extends React.Component {
   }
   render() {
     const rowsData = [];
-    const {
-      rows,
-      cols,
-      current,
-      starting,
-      ending,
-      changeEndpoint
-    } = this.props;
+    const { rows, cols, current, starting, ending } = this.props;
 
     for (let i = 0; i < rows; i++) {
       rowsData.push(

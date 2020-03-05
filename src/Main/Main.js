@@ -11,7 +11,7 @@ class Main extends React.Component {
       <TableContext.Consumer>
         {({ rows, cols, starting, ending, current, changeEndpoint }) => {
           return (
-            <div className={"main"} onClick={changeEndpoint}>
+            <div className={"main"}>
               <Table
                 rows={rows}
                 starting={starting}

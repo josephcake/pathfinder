@@ -8,7 +8,7 @@ class Tr extends React.Component {
   }
 
   render() {
-    const { r, cols, current, starting, ending, changeEndpoint } = this.props;
+    const { r, cols, current, starting, ending } = this.props;
     const tds = [];
     for (let i = 0; i < cols; i++) {
       tds.push(
