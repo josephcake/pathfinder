@@ -2,10 +2,10 @@ import React from "react";
 import Td from "./Td";
 
 class Tr extends React.Component {
-  shouldComponentUpdate(nextProp, nextState) {
-    // debugger;
-    return false;
-  }
+  //   shouldComponentUpdate(nextProp, nextState) {
+  //     // debugger;
+  //     return false;
+  //   }
 
   render() {
     const { r, cols, current, starting, ending } = this.props;

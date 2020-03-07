@@ -9,10 +9,17 @@ class Nav extends React.Component {
           checkRunningFunc,
           knownEndPointSearch,
           breadthFirstSearch,
-          depthFirstSearch
+          depthFirstSearch,
+          refreshBoard,
+          testingReact
         }) => {
           return (
             <div>
+              <div>
+                <button onClick={() => checkRunningFunc(refreshBoard)}>
+                  REFRESH The Page
+                </button>
+              </div>
               <button onClick={() => checkRunningFunc(knownEndPointSearch)}>
                 Known Distance
               </button>
@@ -22,6 +29,11 @@ class Nav extends React.Component {
               <button onClick={() => checkRunningFunc(depthFirstSearch)}>
                 Depth First Search
               </button>
+              {/* <div>
+                <button onClick={() => checkRunningFunc(testingReact)}>
+                  TESTING REACT VS DOM
+                </button>
+              </div> */}
             </div>
           );
         }}

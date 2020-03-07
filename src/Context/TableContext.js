@@ -10,7 +10,8 @@ export class TableContextProvider extends Component {
     rows: 30,
     cols: 60,
     current: "15-10",
-    running: false
+    running: false,
+    refresh: false
   };
   shouldComponentUpdate(nextProps, nextState) {
     if (nextState.ending !== this.state.ending) {
@@ -18,8 +19,49 @@ export class TableContextProvider extends Component {
     }
     return false;
   }
+  refreshBoard = () => {
+    // debugger;
+
+    //  this.animatedCell();
+    this.returnToUnvisited();
+    // for (let i = 0; i < arrVisited.length; i++) {
+    //   let k = i;
+    //   setTimeout(function() {
+    //     arrVisited[k].className = "unvisitedAnimated";
+    //     // arrVisited[k].className = "unvisited";
+    //   }, 20 * k);
+    // }
+    this.setState({
+      running: false,
+      current: this.state.starting
+    });
+  };
+  returnToUnvisited = () => {
+    // debugger;
+    const unvisitedAnimated = document.getElementsByClassName("visited");
+    const arrVisited = Array.from(unvisitedAnimated);
+    for (let i = 0; i < arrVisited.length; i++) {
+      let k = i;
+      setTimeout(function() {
+        // arrVisited[k].className = "unvisitedAnimated";
+        arrVisited[k].className = "unvisited";
+      }, 20 * k);
+    }
+  };
+  animatedCell = () => {
+    const visited = document.getElementsByClassName("visited");
+    const arrVisited = Array.from(visited);
+    for (let i = 0; i < arrVisited.length; i++) {
+      let k = i;
+      setTimeout(function() {
+        arrVisited[k].className = "unvisitedAnimated";
+        // arrVisited[k].className = "unvisited";
+      }, 20 * k);
+    }
+  };
 
   checkRunningFunc = func => {
+    // debugger;
     if (this.state.running) {
       return;
     } else {
@@ -41,7 +83,11 @@ export class TableContextProvider extends Component {
   };
   depthGoUp = (cR, cC, path = {}) => {
     const current = [cR, cC].join("-");
+    // debugger;
     if (current === this.state.ending) {
+      this.setState({
+        running: false
+      });
       return;
     }
     let currentCell = document.getElementById(current);
@@ -63,7 +109,10 @@ export class TableContextProvider extends Component {
         path[String(current)] = true;
         let nextId = [nextRow, cC].join("-");
         let nextCell = document.getElementById(nextId);
-        if (nextCell.className === "unvisited") {
+        if (
+          nextCell.className === "unvisited" ||
+          nextCell.className === "ending"
+        ) {
           this.depthGoUp(nextRow, cC, path);
         } else if (nextCell.className === "visited") {
           this.depthGoLeft(cR, cC - 1, path);
@@ -74,6 +123,9 @@ export class TableContextProvider extends Component {
   depthGoRight = (cR, cC, path) => {
     const current = [cR, cC].join("-");
     if (current === this.state.ending) {
+      this.setState({
+        running: false
+      });
       return;
     }
     setTimeout(() => {
@@ -92,6 +144,9 @@ export class TableContextProvider extends Component {
   depthGoDown = (cR, cC, path = {}) => {
     const current = [cR, cC].join("-");
     if (current === this.state.ending) {
+      this.setState({
+        running: false
+      });
       return;
     }
     let nextRow = cR + 1;
@@ -109,6 +164,9 @@ export class TableContextProvider extends Component {
   depthGoLeft = (cR, cC, path) => {
     const current = [cR, cC].join("-");
     if (current === this.state.ending) {
+      this.setState({
+        running: false
+      });
       return;
     }
     setTimeout(() => {
@@ -143,6 +201,9 @@ export class TableContextProvider extends Component {
 
     const current = [cR, cC].join("-");
     if (current === this.state.ending) {
+      this.setState({
+        running: false
+      });
       return;
     }
     let currentCell = document.getElementById(current);
@@ -181,6 +242,9 @@ export class TableContextProvider extends Component {
     // Color current
     const current = [cR, cC].join("-");
     if (current === this.state.ending) {
+      this.setState({
+        running: false
+      });
       return;
     }
     let currentCell = document.getElementById(current);
@@ -215,11 +279,11 @@ export class TableContextProvider extends Component {
     }
   };
   breadthGoDown = (cR, cC, path = {}) => {
-    // Color current
-    // console.log("down:", cR, cC, path);
-
     const current = [cR, cC].join("-");
     if (current === this.state.ending) {
+      this.setState({
+        running: false
+      });
       return;
     }
     let currentCell = document.getElementById(current);
@@ -256,6 +320,9 @@ export class TableContextProvider extends Component {
   breadthGoLeft = (cR, cC, path = {}) => {
     const current = [cR, cC].join("-");
     if (current === this.state.ending) {
+      this.setState({
+        running: false
+      });
       return;
     }
     let currentCell = document.getElementById(current);
@@ -300,6 +367,16 @@ export class TableContextProvider extends Component {
     let endPoint = this.state.ending.split("-");
     let eR = Number(endPoint[0]);
     let eC = Number(endPoint[1]);
+    if (this.state.current === this.state.ending) {
+      this.setState({
+        running: false
+      });
+    } else {
+      this.setState({
+        running: true
+      });
+    }
+
     if (cR < eR) {
       this.knownGoUp(this.knownEndPointSearch, cR, cC, eR, eC);
     } else if (cR > eR) {
@@ -311,17 +388,22 @@ export class TableContextProvider extends Component {
     }
   };
   knownGoUp = (func, cR, cC, eR, eC) => {
+    const current = [cR, cC].join("-");
+    if (current === this.state.ending) {
+      return;
+    } else if (current !== this.state.starting) {
+      let currentCell = document.getElementById(current);
+      currentCell.className = "visited";
+    }
+
     if (cR !== eR) {
       let nextRow = cR + 1;
       let nextCurrent = [nextRow, cC].join("-");
-      let data = document.getElementById(nextCurrent);
-      data.className = "visited";
       if (nextRow === eR) {
         setTimeout(() => {
           this.setState(
             {
-              current: nextCurrent,
-              running: true
+              current: nextCurrent
             },
             () => {
               func();
@@ -336,17 +418,21 @@ export class TableContextProvider extends Component {
     }
   };
   knownGoLeft = (func, cR, cC, eR, eC) => {
+    const current = [cR, cC].join("-");
+    if (current === this.state.ending) {
+      return;
+    } else if (current !== this.state.starting) {
+      let currentCell = document.getElementById(current);
+      currentCell.className = "visited";
+    }
     if (cC !== eC) {
       let nextCol = cC - 1;
       let nextCurrent = [cR, nextCol].join("-");
-      let data = document.getElementById(nextCurrent);
-      data.className = "visited";
       if (nextCol === eC) {
         setTimeout(() => {
           this.setState(
             {
-              current: nextCurrent,
-              running: true
+              current: nextCurrent
             },
             () => {
               func();
@@ -361,17 +447,21 @@ export class TableContextProvider extends Component {
     }
   };
   knownGoRight = (func, cR, cC, eR, eC) => {
+    const current = [cR, cC].join("-");
+    if (current === this.state.ending) {
+      return;
+    } else if (current !== this.state.starting) {
+      let currentCell = document.getElementById(current);
+      currentCell.className = "visited";
+    }
     if (cC !== eC) {
       let nextCol = cC + 1;
       let nextCurrent = [cR, nextCol].join("-");
-      let data = document.getElementById(nextCurrent);
-      data.className = "visited";
       if (nextCol === eC) {
         setTimeout(() => {
           this.setState(
             {
-              current: nextCurrent,
-              running: true
+              current: nextCurrent
             },
             () => {
               func();
@@ -386,18 +476,22 @@ export class TableContextProvider extends Component {
     }
   };
   knownGoDown = (func, cR, cC, eR, eC) => {
+    const current = [cR, cC].join("-");
+    if (current === this.state.ending) {
+      return;
+    } else if (current !== this.state.starting) {
+      let currentCell = document.getElementById(current);
+      currentCell.className = "visited";
+    }
     if (cR !== eR) {
       let nextRow = cR - 1;
       let nextCurrent = [nextRow, cC].join("-");
-      let data = document.getElementById(nextCurrent);
-      data.className = "visited";
-      // debugger;
+
       if (nextRow === eR) {
         setTimeout(() => {
           this.setState(
             {
-              current: nextCurrent,
-              running: true
+              current: nextCurrent
             },
             () => {
               func();
@@ -410,6 +504,28 @@ export class TableContextProvider extends Component {
         }, 10);
       }
     }
+  };
+
+  testingReact = () => {
+    let current = this.state.current.split("-");
+    let cR = Number(current[0]);
+    let cC = Number(current[1]);
+    // debugger;
+    let endPoint = this.state.ending.split("-");
+    let eR = Number(endPoint[0]);
+    let eC = Number(endPoint[1]);
+    const nextCurrent = [cR, cC + 1].join("-");
+    setTimeout(() => {
+      if (cC !== eC && cC < 100) {
+        // debugger;
+        this.setState(
+          {
+            current: nextCurrent
+          },
+          () => this.testingReact()
+        );
+      }
+    }, 5);
   };
 
   changeEndpoint = e => {
@@ -441,7 +557,9 @@ export class TableContextProvider extends Component {
           breadthFirstSearch: this.breadthFirstSearch,
           checkRunningFunc: this.checkRunningFunc,
           changeEndpoint: this.changeEndpoint,
-          depthFirstSearch: this.depthFirstSearch
+          depthFirstSearch: this.depthFirstSearch,
+          refreshBoard: this.refreshBoard,
+          testingReact: this.testingReact
         }}
       >
         {this.props.children}

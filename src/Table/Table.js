@@ -3,10 +3,9 @@ import Tr from "./Tr";
 
 class Table extends React.Component {
   shouldComponentUpdate(nextProp, nextState) {
-    //   debugger;
-    //   if (this.props.ending !== nextProp.ending) {
-    //     return true;
-    //   }
+    if (this.props.ending !== nextProp.ending) {
+      return true;
+    }
     return false;
   }
   render() {

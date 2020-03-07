@@ -21,7 +21,7 @@ html {
   justify-content: space-evenly;
   align-items: center;
   height: 100vh;
-  background-color: lightsteelblue;
+  background-color: whitesmoke;
 }
 .main {
   display: flex;
@@ -46,38 +46,71 @@ td {
   height: 20px !important;
   font-size: 0px;
   border-radius: 8px;
-  margin: 1px;
+  margin: 2px;
 }
 
 .starting {
   background-color: darkmagenta;
 }
 .ending {
-  background-color: black;
+  /* border: solid 2px darkmagenta; */
+  background-color: aqua;
 }
 
 .path {
   background-color: tomato;
   transition: background 10ms linear;
 }
-.unvisited {
-  background-color: black;
-}
-.visited {
-  animation-name: visitedAnimation;
+.unvisitedAnimated {
+  animation-name: unvisitedAnimation;
   animation-duration: 1.5s;
   animation-timing-function: ease-out;
   animation-delay: 0s;
   animation-direction: alternate;
   animation-iteration-count: 1;
   animation-fill-mode: forwards;
+  /* animation-play-state: running; */
+}
+.unvisited {
+  background-color: lightgray;
+  transition: all ease-in-out;
+}
+.visited {
+  border: purple solid 1px;
+  animation-name: visitedAnimation;
+  animation-duration: 1.5s;
+  animation-timing-function: ease-in;
+  animation-delay: 0s;
+  animation-direction: alternate;
+  animation-iteration-count: 1;
+  animation-fill-mode: forwards;
   animation-play-state: running;
+}
+
+@keyframes unvisitedAnimation {
+  0% {
+    transform: scale(1);
+    background-color: rgba(0, 0, 66, 0.75);
+    /* border-radius: 100%; */
+  }
+  50% {
+    transform: scale(0.8);
+    background-color: rgba(250, 24, 67, 0.75);
+  }
+  75% {
+    transform: scale(0.5);
+    background-color: rgba(184, 121, 129, 0.75);
+  }
+  100% {
+    /* transform: scale(1); */
+    background-color: lightgray;
+  }
 }
 @keyframes visitedAnimation {
   0% {
     transform: scale(0.3);
     background-color: rgba(0, 0, 66, 0.75);
-    border-radius: 100%;
+    /* border-radius: 100%; */
   }
   50% {
     background-color: rgba(250, 24, 67, 0.75);
@@ -88,6 +121,6 @@ td {
   }
   100% {
     transform: scale(1);
-    background-color: lavender;
+    background-color: rgb(114, 77, 156);
   }
 }
