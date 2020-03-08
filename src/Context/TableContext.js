@@ -17,7 +17,17 @@ export class TableContextProvider extends Component {
   };
   componentDidMount() {
     window.addEventListener("mouseup", this.wallConstructorOff);
+    const node = document.getElementById(this.state.ending); //some animations takes a while to execute
+    const mutation = nodeList => {
+      if (nodeList[0].target.className === "ending-acquired") {
+        node.className = "ending";
+        this.setState({ running: false });
+      }
+    };
+    const observer = new MutationObserver(mutation);
+    observer.observe(node, { attributes: true, attributeFilter: ["class"] });
   }
+
   shouldComponentUpdate(nextProps, nextState) {
     if (
       nextState.ending !== this.state.ending ||
@@ -185,6 +195,7 @@ export class TableContextProvider extends Component {
       }, 10);
     }
   };
+
   depthGoRight = (cR, cC, path) => {
     const current = `${cR}-${cC}`;
     if (current === this.state.ending) {
@@ -259,13 +270,23 @@ export class TableContextProvider extends Component {
       let cC = Number(current[1]);
       this.breadthHelper(cR, cC, path, queue);
       counter++;
+      if (queue[counter] === this.state.ending) {
+        break;
+      }
     }
     for (let i = 1; i < queue.length; i++) {
+      //don't color the starting
       let k = i;
       if (queue[k] !== this.state.ending && queue[k] !== this.state.starting) {
         setTimeout(function() {
           let cell = document.getElementById(queue[k]);
           cell.className = "visited";
+        }, 10 * k);
+      }
+      if (queue[k] === this.state.ending) {
+        setTimeout(function() {
+          let cell = document.getElementById(queue[k]);
+          cell.className = "ending-acquired";
         }, 10 * k);
       }
     }
@@ -284,226 +305,36 @@ export class TableContextProvider extends Component {
     if (rightCell) {
       if (!path[rightNext]) {
         path[rightNext] = true;
-        queue.push(rightNext);
+        if (rightCell.className !== "wall") {
+          queue.push(rightNext);
+        }
       }
     }
     if (upCell) {
       if (!path[upNext]) {
         path[upNext] = true;
-        queue.push(upNext);
+        if (upCell.className !== "wall") {
+          queue.push(upNext);
+        }
       }
     }
     if (downCell) {
       if (!path[downNext]) {
         path[downNext] = true;
-        queue.push(downNext);
+        if (downCell.className !== "wall") {
+          queue.push(downNext);
+        }
       }
     }
     if (leftCell) {
       if (!path[leftNext]) {
         path[leftNext] = true;
-        queue.push(leftNext);
+        if (leftCell.className !== "wall") {
+          queue.push(leftNext);
+        }
       }
     }
   };
-
-  // breadthGoUp = (cR, cC, path = {}) => {
-  //   // Color current
-  //   // console.log("up:", cR, cC, path);
-
-  //   const current = `${cR}-${cC}`;
-  //   if (current === this.state.ending) {
-  //     this.setState({
-  //       running: false
-  //     });
-  //     return;
-  //   }
-  //   let currentCell = document.getElementById(current);
-  //   let nextRow = cR - 1;
-  //   let checkNextRow = `${nextRow}-${cC}`;
-  //   let checkNextRowCell = document.getElementById(checkNextRow);
-  //   if (cR > 0 && checkNextRowCell.className === "wall") {
-  //     if (checkNextRowCell.className === "wall") {
-  //       // currentCell.className = "visited";
-  //       // path[String(current)] = true;
-  //       this.breadthGoRight(cR, cC + 1, path);
-  //     }
-  //   } else if (cR === 0) {
-  //     if (!path[current]) {
-  //       currentCell.className = "visited";
-  //       path[String(current)] = true;
-  //     }
-  //     this.breadthGoRight(cR, cC + 1, path);
-  //   } else if (
-  //     currentCell.className === "visited" ||
-  //     currentCell.className === "starting"
-  //   ) {
-  //     this.breadthGoUp(nextRow, cC, path);
-  //   } else if (currentCell.className === "unvisited") {
-  //     setTimeout(() => {
-  //       currentCell.className = "visited";
-  //       path[String(current)] = true;
-  //       let next = cC + 1;
-  //       let nextId = [cR, next].join("-");
-  //       let nextCell = document.getElementById(nextId);
-  //       if (
-  //         nextCell.className === "visited" ||
-  //         nextCell.className === "starting" ||
-  //         nextCell.className === "wall"
-  //       ) {
-  //         this.breadthGoUp(nextRow, cC, path);
-  //       } else if (nextCell.className === "unvisited") {
-  //         this.breadthGoRight(cR, next, path);
-  //       }
-  //     }, 10);
-  //   }
-  // };
-  // breadthGoRight = (cR, cC, path = {}) => {
-  //   // console.log("right:", cR, cC, path);
-  //   // Color current
-  //   const current = `${cR}-${cC}`;
-  //   if (current === this.state.ending) {
-  //     this.setState({
-  //       running: false
-  //     });
-  //     return;
-  //   }
-  //   let currentCell = document.getElementById(current);
-  //   let nextCol = cC + 1;
-  //   let checkNextCol = `${cR}-${nextCol}`;
-  //   let checkNextColCell = document.getElementById(checkNextCol);
-  //   if (cC < this.state.cols - 1 && checkNextColCell.className === "wall") {
-  //     if (checkNextColCell.className === "wall") {
-  //       // currentCell.className = "visited";
-  //       // path[String(current)] = true;
-  //       this.breadthGoDown(cR + 1, cC, path);
-  //     }
-  //   } else if (cC === this.state.cols - 1) {
-  //     if (!path[current]) {
-  //       currentCell.className = "visited";
-  //       path[String(current)] = true;
-  //     }
-  //     this.breadthGoDown(cR + 1, cC, path);
-  //   } else if (
-  //     currentCell.className === "visited" ||
-  //     currentCell.className === "starting"
-  //   ) {
-  //     this.breadthGoRight(cR, nextCol, path);
-  //   } else if (currentCell.className === "unvisited") {
-  //     setTimeout(() => {
-  //       currentCell.className = "visited";
-  //       path[String(current)] = true;
-  //       let next = cR + 1;
-  //       let nextId = [next, cC].join("-");
-  //       let nextCell = document.getElementById(nextId);
-  //       if (
-  //         nextCell.className === "visited" ||
-  //         nextCell.className === "starting" ||
-  //         nextCell.className === "wall"
-  //       ) {
-  //         this.breadthGoRight(cR, nextCol, path);
-  //       } else if (nextCell.className === "unvisited") {
-  //         this.breadthGoDown(next, cC, path);
-  //       }
-  //     }, 10);
-  //   }
-  // };
-  // breadthGoDown = (cR, cC, path = {}) => {
-  //   const current = `${cR}-${cC}`;
-  //   if (current === this.state.ending) {
-  //     this.setState({
-  //       running: false
-  //     });
-  //     return;
-  //   }
-  //   let currentCell = document.getElementById(current);
-  //   let nextRow = cR + 1;
-  //   let checkNextRow = `${nextRow}-${cC}`;
-  //   let checkNextRowCell = document.getElementById(checkNextRow);
-  //   if (cR < this.state.rows - 1 && checkNextRowCell.className === "wall") {
-  //     if (checkNextRowCell.className === "wall") {
-  //       // currentCell.className = "visited";
-  //       // path[String(current)] = true;
-  //       this.breadthGoLeft(cR, cC - 1, path);
-  //     }
-  //   } else if (cR === this.state.rows - 1) {
-  //     if (!path[current]) {
-  //       currentCell.className = "visited";
-  //       path[String(current)] = true;
-  //     }
-  //     this.breadthGoLeft(cR, cC - 1, path);
-  //   } else if (
-  //     currentCell.className === "visited" ||
-  //     currentCell.className === "starting"
-  //   ) {
-  //     this.breadthGoDown(nextRow, cC, path);
-  //   } else if (currentCell.className === "unvisited") {
-  //     setTimeout(() => {
-  //       currentCell.className = "visited";
-  //       path[String(current)] = true;
-  //       let next = cC - 1;
-  //       let nextId = [cR, next].join("-");
-  //       let nextCell = document.getElementById(nextId);
-  //       if (
-  //         nextCell.className === "visited" ||
-  //         nextCell.className === "starting" ||
-  //         nextCell.className === "wall"
-  //       ) {
-  //         this.breadthGoDown(nextRow, cC, path);
-  //       } else if (nextCell.className === "unvisited") {
-  //         this.breadthGoLeft(cR, next, path);
-  //       }
-  //     }, 10);
-  //   }
-  // };
-  // breadthGoLeft = (cR, cC, path = {}) => {
-  //   const current = `${cR}-${cC}`;
-  //   if (current === this.state.ending) {
-  //     this.setState({
-  //       running: false
-  //     });
-  //     return;
-  //   }
-  //   let currentCell = document.getElementById(current);
-  //   let nextCol = cC - 1;
-  //   let checkNextCol = `${cR}-${nextCol}`;
-  //   let checkNextColCell = document.getElementById(checkNextCol);
-  //   if (cC > 0 && checkNextColCell.className === "wall") {
-  //     if (checkNextColCell.className === "wall") {
-  //       // currentCell.className = "visited";
-  //       // path[String(current)] = true;
-  //       this.breadthGoUp(cR - 1, cC, path);
-  //     }
-  //   } else if (cC === 0) {
-  //     if (!path[current]) {
-  //       currentCell.className = "visited";
-  //       path[String(current)] = true;
-  //     }
-  //     this.breadthGoUp(cR - 1, cC, path);
-  //   } else if (
-  //     currentCell.className === "visited" ||
-  //     currentCell.className === "starting"
-  //   ) {
-  //     this.breadthGoLeft(cR, nextCol, path);
-  //   } else if (currentCell.className === "unvisited") {
-  //     setTimeout(() => {
-  //       currentCell.className = "visited";
-  //       path[String(current)] = true;
-  //       let next = cR - 1;
-  //       let nextId = [next, cC].join("-");
-  //       let nextCell = document.getElementById(nextId);
-  //       if (
-  //         nextCell.className === "visited" ||
-  //         nextCell.className === "starting" ||
-  //         nextCell.className === "wall"
-  //       ) {
-  //         this.breadthGoLeft(cR, nextCol, path);
-  //       } else if (nextCell.className === "unvisited") {
-  //         this.breadthGoUp(next, cC, path);
-  //       }
-  //     }, 10);
-  //   }
-  // };
 
   knownEndPointSearch = () => {
     console.log("running parent:");

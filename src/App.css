@@ -59,6 +59,9 @@ td {
   /* border: solid 2px darkmagenta; */
   background-color: aqua;
 }
+.ending-acquired {
+  background-color: aqua;
+}
 
 .path {
   background-color: tomato;
