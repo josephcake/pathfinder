@@ -144,117 +144,94 @@ export class TableContextProvider extends Component {
     }
   };
   depthFirstSearch = () => {
-    let current = this.state.current.split("-");
-    let currentRow = Number(current[0]);
-    let currentCol = Number(current[1]);
     this.setState({
       running: true
     });
-    if (currentRow !== 0) {
-      this.depthGoUp(currentRow, currentCol);
-    } else {
-      this.depthGoDown(currentRow, currentCol);
+    let queue = [this.state.current];
+    let path = {};
+    let counter = 0;
+    while (queue[counter] !== this.state.ending) {
+      let current = queue[counter].split("-");
+      let cR = Number(current[0]);
+      let cC = Number(current[1]);
+      this.depthHelper(cR, cC, path, queue); //go up first
+      // debugger;
+      counter++;
+      if (queue[counter] === this.state.ending) {
+        break;
+      }
     }
+    for (let i = 1; i < queue.length; i++) {
+      //don't color the starting
+      let k = i;
+      if (queue[k] !== this.state.ending && queue[k] !== this.state.starting) {
+        setTimeout(function() {
+          let cell = document.getElementById(queue[k]);
+          cell.className = "visited";
+        }, 10 * k);
+      }
+      if (queue[k] === this.state.ending) {
+        setTimeout(function() {
+          let cell = document.getElementById(queue[k]);
+          cell.className = "ending-acquired";
+        }, 10 * k);
+      }
+    }
+    // if (currentRow !== 0) {
+    //   this.depthGoUp(currentRow, currentCol);
+    // } else {
+    //   this.depthGoDown(currentRow, currentCol);
+    // }
   };
-  depthGoUp = (cR, cC, path = {}) => {
-    const current = `${cR}-${cC}`;
-    // debugger;
+  depthHelper = (cR, cC, path, queue) => {
+    let current = `${cR}-${cC}`;
+    let upNext = `${cR - 1}-${cC}`;
+    let downNext = `${cR + 1}-${cC}`;
+    let leftNext = `${cR}-${cC - 1}`;
+    let rightNext = `${cR}-${cC + 1}`;
+    console.log(current);
     if (current === this.state.ending) {
-      this.setState({
-        running: false
-      });
       return;
     }
-    let currentCell = document.getElementById(current);
-    let nextRow = cR - 1;
-    if (cR === 0) {
-      if (!path[current]) {
-        currentCell.className = "visited";
-        path[String(current)] = true;
-      }
-      this.depthGoRight(cR, cC + 1, path);
+    if (!path[leftNext] && !path[rightNext] && cR !== 0 && !path[upNext]) {
+      queue.push(upNext);
+      path[upNext] = true;
+    } else if (cR === 1 && path[rightNext] && path[downNext]) {
+      queue.push(leftNext);
+      path[leftNext] = true;
     } else if (
-      currentCell.className === "visited" ||
-      currentCell.className === "starting"
+      cR !== 0 &&
+      path[rightNext] &&
+      path[upNext] &&
+      cR !== this.state.rows - 1
     ) {
-      this.depthGoUp(nextRow, cC, path);
-    } else if (currentCell.className === "unvisited") {
-      setTimeout(() => {
-        currentCell.className = "visited";
-        path[String(current)] = true;
-        let nextId = `${nextRow}-${cC}`;
-        let nextCell = document.getElementById(nextId);
-        if (
-          nextCell.className === "unvisited" ||
-          nextCell.className === "ending"
-        ) {
-          this.depthGoUp(nextRow, cC, path);
-        } else if (nextCell.className === "visited") {
-          this.depthGoLeft(cR, cC - 1, path);
-        }
-      }, 10);
-    }
-  };
-
-  depthGoRight = (cR, cC, path) => {
-    const current = `${cR}-${cC}`;
-    if (current === this.state.ending) {
-      this.setState({
-        running: false
-      });
-      return;
-    }
-    setTimeout(() => {
-      let currentCell = document.getElementById(current);
-      if (cR === 0 && cC !== this.state.cols - 1) {
-        currentCell.className = "visited";
-        path[String(current)] = true;
-        this.depthGoRight(cR, cC + 1, path);
-      } else if (cR === 0 && cC === this.state.cols - 1) {
-        currentCell.className = "visited";
-        path[String(current)] = true;
-        this.depthGoDown(cR + 1, cC, path);
-      }
-    }, 10);
-  };
-  depthGoDown = (cR, cC, path = {}) => {
-    const current = `${cR}-${cC}`;
-    if (current === this.state.ending) {
-      this.setState({
-        running: false
-      });
-      return;
-    }
-    let nextRow = cR + 1;
-    setTimeout(() => {
-      let currentCell = document.getElementById(current);
-      currentCell.className = "visited";
-      path[String(current)] = true;
-      if (nextRow !== this.state.rows) {
-        this.depthGoDown(nextRow, cC, path);
+      queue.push(downNext);
+      path[downNext] = true;
+    } else if (cR !== 0 && path[rightNext] && path[downNext]) {
+      queue.push(upNext);
+      path[upNext] = true;
+    } else if (!path[rightNext] && cR === 0 && cC !== this.state.cols - 1) {
+      queue.push(rightNext);
+      path[rightNext] = true;
+    } else if (!path[rightNext] && cR === 0 && cC === this.state.cols - 1) {
+      queue.push(downNext);
+      path[downNext] = true;
+    } else if (
+      cC === this.state.cols - 1 &&
+      cR !== this.state.rows - 1 &&
+      path[upNext]
+    ) {
+      queue.push(downNext);
+      path[downNext] = true;
+    } else if (cR === this.state.rows - 1) {
+      if (path[upNext]) {
+        queue.push(leftNext);
+        path[leftNext] = true;
       } else {
-        this.depthGoLeft(cR, cC - 1, path);
+        queue.push(upNext);
+        path[upNext] = true;
       }
-    }, 10);
-  };
-  depthGoLeft = (cR, cC, path) => {
-    const current = `${cR}-${cC}`;
-    if (current === this.state.ending) {
-      this.setState({
-        running: false
-      });
-      return;
     }
-    setTimeout(() => {
-      let currentCell = document.getElementById(current);
-      currentCell.className = "visited";
-      path[String(current)] = true;
-      if (cR !== 1) {
-        this.depthGoUp(cR - 1, cC, path);
-      } else {
-        this.depthGoDown(cR + 1, cC, path);
-      }
-    }, 10);
   };
 
   breadthFirstSearch = () => {
