@@ -12,9 +12,17 @@ class Td extends React.Component {
   // }
   // return true;
   // }
-
   render() {
-    const { r, c, starting, ending, current } = this.props;
+    const {
+      r,
+      c,
+      starting,
+      ending,
+      current,
+      wallConstructorOn,
+      wallConstructorOff,
+      wallBuilding
+    } = this.props;
     // console.log(current);
     const cell = `${r}-${c}`;
     let classN =
@@ -26,7 +34,14 @@ class Td extends React.Component {
         ? "visited"
         : "unvisited";
     return (
-      <td className={classN} id={cell}>
+      <td
+        className={classN}
+        id={cell}
+        draggable={false}
+        onMouseDown={wallConstructorOn}
+        // onMouseUp={wallConstructorOff}
+        onMouseMove={wallBuilding}
+      >
         0
       </td>
     );

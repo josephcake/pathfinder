@@ -9,15 +9,29 @@ class Main extends React.Component {
   render() {
     return (
       <TableContext.Consumer>
-        {({ rows, cols, starting, ending, current, changeEndpoint }) => {
+        {({
+          rows,
+          cols,
+          starting,
+          ending,
+          current,
+          changeEndpoint,
+          wallConstructorOn,
+          wallConstructorOff,
+          wallBuilding
+        }) => {
           return (
-            <div className={"main"}>
+            <div id={"main"} className={"main"}>
               <Table
                 rows={rows}
                 starting={starting}
                 ending={ending}
                 current={current}
                 cols={cols}
+                draggable={false}
+                wallConstructorOn={wallConstructorOn}
+                wallConstructorOff={wallConstructorOff}
+                wallBuilding={wallBuilding}
               />
               ;
             </div>

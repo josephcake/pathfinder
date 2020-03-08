@@ -4,6 +4,9 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  -webkit-user-select: none;
+  -webkit-user-drag: none;
+  -webkit-app-region: no-drag;
 }
 body {
   margin: 0;
@@ -28,7 +31,7 @@ html {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  cursor: url("http://www.rw-designer.com/cursor-extern.php?id=78057"), auto;
+  /* cursor: url("http://www.rw-designer.com/cursor-extern.php?id=78057"), auto; */
 }
 table {
   border-collapse: collapse;
@@ -41,12 +44,12 @@ td {
   display: flex;
   justify-content: center;
   align-items: center;
-  /* border: solid 1px darkgray; */
-  width: 20px !important;
-  height: 20px !important;
+  border: solid 1px white;
+  width: 25px !important;
+  height: 25px !important;
   font-size: 0px;
-  border-radius: 8px;
-  margin: 2px;
+  border-radius: 4px;
+  padding: 2px;
 }
 
 .starting {
@@ -60,6 +63,12 @@ td {
 .path {
   background-color: tomato;
   transition: background 10ms linear;
+}
+.wall {
+  border: dotted 3px rgb(94, 32, 32);
+  /* border-radius: 0; */
+
+  background-color: gray;
 }
 .unvisitedAnimated {
   animation-name: unvisitedAnimation;

@@ -10,7 +10,16 @@ class Table extends React.Component {
   }
   render() {
     const rowsData = [];
-    const { rows, cols, current, starting, ending } = this.props;
+    const {
+      rows,
+      cols,
+      current,
+      starting,
+      ending,
+      wallBuilding,
+      wallConstructorOn,
+      wallConstructorOff
+    } = this.props;
 
     for (let i = 0; i < rows; i++) {
       rowsData.push(
@@ -21,6 +30,10 @@ class Table extends React.Component {
           current={current}
           starting={starting}
           ending={ending}
+          wallConstructorOn={wallConstructorOn}
+          wallConstructorOff={wallConstructorOff}
+          wallBuilding={wallBuilding}
+          draggable={false}
         />
       );
     }

@@ -11,10 +11,21 @@ class Nav extends React.Component {
           breadthFirstSearch,
           depthFirstSearch,
           refreshBoard,
-          testingReact
+          testingReact,
+          toggleWall,
+          wallOn
         }) => {
           return (
             <div>
+              <div>
+                <label for={"wall"}>Wall</label>
+                <input
+                  id={"wall"}
+                  type={"checkbox"}
+                  onChange={() => checkRunningFunc(toggleWall)}
+                  checked={wallOn}
+                />
+              </div>
               <div>
                 <button onClick={() => checkRunningFunc(refreshBoard)}>
                   REFRESH The Page

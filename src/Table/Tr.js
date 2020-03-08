@@ -8,7 +8,16 @@ class Tr extends React.Component {
   //   }
 
   render() {
-    const { r, cols, current, starting, ending } = this.props;
+    const {
+      r,
+      cols,
+      current,
+      starting,
+      ending,
+      wallConstructorOn,
+      wallConstructorOff,
+      wallBuilding
+    } = this.props;
     const tds = [];
     for (let i = 0; i < cols; i++) {
       tds.push(
@@ -19,6 +28,10 @@ class Tr extends React.Component {
           current={current}
           starting={starting}
           ending={ending}
+          draggable={false}
+          wallConstructorOn={wallConstructorOn}
+          wallConstructorOff={wallConstructorOff}
+          wallBuilding={wallBuilding}
         />
       );
     }
