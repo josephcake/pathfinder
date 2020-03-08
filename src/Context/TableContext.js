@@ -5,11 +5,11 @@ import * as _ from "underscore";
 export const TableContext = createContext();
 export class TableContextProvider extends Component {
   state = {
-    starting: "15-10",
-    ending: "15-45",
+    starting: "15-12",
+    ending: "15-42",
     rows: 30,
     cols: 60,
-    current: "15-10",
+    current: "15-12",
     running: false,
     refresh: false,
     wallOn: false,
@@ -147,14 +147,18 @@ export class TableContextProvider extends Component {
     this.setState({
       running: true
     });
-    let queue = [this.state.current];
+    let queue = ["15-59"];
     let path = {};
     let counter = 0;
     while (queue[counter] !== this.state.ending) {
       let current = queue[counter].split("-");
       let cR = Number(current[0]);
       let cC = Number(current[1]);
-      this.depthHelper(cR, cC, path, queue); //go up first
+      console.log(queue[counter]);
+      // if (cR > 0 && cR === 15 && cC < this.state.cols - 1 && cC !== 10) {
+      //middle end
+      this.breadthHelper(cR, cC, path, queue);
+      // } else this.depthHelper(cR, cC, path, queue); //go up first
       // debugger;
       counter++;
       if (queue[counter] === this.state.ending) {
@@ -199,12 +203,7 @@ export class TableContextProvider extends Component {
     } else if (cR === 1 && path[rightNext] && path[downNext]) {
       queue.push(leftNext);
       path[leftNext] = true;
-    } else if (
-      cR !== 0 &&
-      path[rightNext] &&
-      path[upNext] &&
-      cR !== this.state.rows - 1
-    ) {
+    } else if (cR !== 0 && path[upNext] && cR !== this.state.rows - 1) {
       queue.push(downNext);
       path[downNext] = true;
     } else if (cR !== 0 && path[rightNext] && path[downNext]) {
@@ -213,13 +212,11 @@ export class TableContextProvider extends Component {
     } else if (!path[rightNext] && cR === 0 && cC !== this.state.cols - 1) {
       queue.push(rightNext);
       path[rightNext] = true;
-    } else if (!path[rightNext] && cR === 0 && cC === this.state.cols - 1) {
-      queue.push(downNext);
-      path[downNext] = true;
     } else if (
+      !path[rightNext] &&
+      cR === 0 &&
       cC === this.state.cols - 1 &&
-      cR !== this.state.rows - 1 &&
-      path[upNext]
+      cR !== this.state.rows - 1
     ) {
       queue.push(downNext);
       path[downNext] = true;
