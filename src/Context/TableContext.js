@@ -1,6 +1,10 @@
-import React, { Component, createContext } from "react";
+import React, { Component, createContext, lazy } from "react";
 import * as _ from "underscore";
 // import { withRouter } from "react-router";
+// const { BASIC_WALL } = React.lazy(() => import("../Wall/BasicWall"));
+import { BASIC_WALL } from "../Wall/BasicWall";
+import { SPIRAL_WALL } from "../Wall/SpiralWall";
+import { STAIR_WALL } from "../Wall/StairWall";
 
 export const TableContext = createContext();
 export class TableContextProvider extends Component {
@@ -13,7 +17,8 @@ export class TableContextProvider extends Component {
     running: false,
     refresh: false,
     wallOn: false,
-    building: false
+    building: false,
+    blocked: false
   };
   componentDidMount() {
     window.addEventListener("mouseup", this.wallConstructorOff);
@@ -67,11 +72,8 @@ export class TableContextProvider extends Component {
   wallConstructorOff = () => {
     // debugger;
     if (this.state.wallOn) {
-      this.setState(
-        {
-          building: false
-        },
-        () => console.log(this.state.building)
+      this.setState({ running: false, building: false }, () =>
+        console.log(this.state.building)
       );
     }
   };
@@ -87,66 +89,197 @@ export class TableContextProvider extends Component {
         console.log("starting/ending");
       } else {
         let cell = document.getElementById(id);
-        cell.className = "wall";
+        if (cell.id !== "15-59") cell.className = "wall";
       }
     }
   };
 
-  refreshBoard = () => {
-    // debugger;
-    //  this.animatedCell();
-    this.returnToUnvisited();
+  buildMaze = e => {
+    const name = e.target.name;
+    const mazeType = ["basic", "spiral", "stair"];
+    const mazes = [BASIC_WALL, SPIRAL_WALL, STAIR_WALL];
+    const idx = mazeType.indexOf(name);
+    for (let i = 0; i < mazes[idx].length; i++) {
+      let k = i;
+      let cell = document.getElementById(mazes[idx][k]);
+      setTimeout(function() {
+        cell.className = "wall";
+      }, 10 * k);
+    }
+    this.setState({ running: false });
+  };
+
+  clearBoard = e => {
+    this.returnToUnvisited(e);
     this.setState({
       running: false,
       current: this.state.starting
     });
   };
 
-  returnToUnvisited = () => {
+  returnToUnvisited = e => {
     // debugger;
-    const unvisitedAnimated = document.getElementsByClassName("visited");
-    const walledCells = document.getElementsByClassName("wall");
+    if (e) {
+      const name = e.target.name;
 
-    const arrWalls = Array.from(walledCells);
-    const arrVisited = Array.from(unvisitedAnimated);
-    for (let i = 0; i < arrWalls.length; i++) {
-      let k = i;
-      setTimeout(function() {
-        arrWalls[k].className = "unvisited";
-      }, 20 * k);
-    }
-    for (let i = 0; i < arrVisited.length; i++) {
-      let k = i;
-      setTimeout(function() {
-        // arrVisited[k].className = "unvisitedAnimated";
+      const cellsHTML = document.getElementsByClassName(name);
+      const cellsArr = Array.from(cellsHTML);
+      for (let i = 0; i < cellsArr.length; i++) {
+        let k = i;
+        cellsArr[k].className = "unvisited";
+      }
+    } else {
+      const unvisitedAnimated = document.getElementsByClassName("visited");
+      const cellsHTML = document.getElementsByClassName("wall");
+      const cellsArr = Array.from(cellsHTML);
+      const arrVisited = Array.from(unvisitedAnimated);
+
+      for (let i = 0; i < cellsArr.length; i++) {
+        let k = i;
+        cellsArr[k].className = "unvisited";
+      }
+      for (let i = 0; i < arrVisited.length; i++) {
+        let k = i;
         arrVisited[k].className = "unvisited";
-      }, 10 * k);
+      }
     }
-  };
-  animatedCell = () => {
-    const visited = document.getElementsByClassName("visited");
-    const arrVisited = Array.from(visited);
-    for (let i = 0; i < arrVisited.length; i++) {
-      let k = i;
-      setTimeout(function() {
-        arrVisited[k].className = "unvisitedAnimated";
-        // arrVisited[k].className = "unvisited";
-      }, 20 * k);
-    }
+
+    // for (let i = 0; i < arrWalls.length; i++) {
+    //   let k = i;
+    //   setTimeout(function() {
+    //     arrWalls[k].className = "unvisited";
+    //   }, 2 * k);
+    // }
+    // for (let i = 0; i < arrVisited.length; i++) {
+    //   let k = i;
+    //   setTimeout(function() {
+    //     arrVisited[k].className = "unvisited";
+    //   }, 2 * k);
+    // }
   };
 
-  checkRunningFunc = func => {
+  checkRunningFunc = (func, e) => {
     // debugger;
     if (this.state.running) {
       return;
     } else {
-      func();
+      this.setState({ running: true });
+      func(e);
     }
   };
+  linearSearch = () => {
+    let current = this.state.current.split("-");
+    let path = {};
+
+    const linearHelper = () => {
+      let cR = Number(current[0]);
+      let cC = Number(current[1]);
+      console.log(`${cR}-${cC}`);
+      // debugger;
+      if (`${cR}-${cC}` === this.state.ending) {
+        return;
+      }
+      let upNext = `${cR - 1}-${cC}`;
+      let downNext = `${cR + 1}-${cC}`;
+      let leftNext = `${cR}-${cC - 1}`;
+      let rightNext = `${cR}-${cC + 1}`;
+      let currentCell = document.getElementById(`${cR}-${cC}`);
+      let upCell = document.getElementById(upNext);
+      let downCell = document.getElementById(downNext);
+      let leftCell = document.getElementById(leftNext);
+      let rightCell = document.getElementById(rightNext);
+
+      setTimeout(() => {
+        if (currentCell.className !== "starting") {
+          currentCell.className = "visited";
+        }
+
+        if (
+          (leftCell && leftCell.className === "ending") ||
+          (rightCell && rightCell.className === "ending") ||
+          (upCell && upCell.className === "ending") ||
+          (downCell && downCell.className === "ending")
+        ) {
+          return;
+        }
+        if (leftCell && leftCell.className === "unvisited" && !path[leftNext]) {
+          current = leftNext.split("-");
+          path[leftNext] = true;
+          linearHelper();
+        } else if (
+          !leftCell ||
+          leftCell.className === "wall" ||
+          leftCell.className === "visited" ||
+          leftCell.className === "starting" ||
+          path[leftNext]
+        ) {
+          // debugger;
+          if (upCell && upCell.className === "unvisited" && !path[upNext]) {
+            current = upNext.split("-");
+            path[upNext] = true;
+            linearHelper();
+          } else if (
+            downCell &&
+            downCell.className === "unvisited" &&
+            !path[downNext]
+          ) {
+            current = downNext.split("-");
+            path[downNext] = true;
+            linearHelper();
+          } else if (
+            rightCell &&
+            rightCell.className === "unvisited" &&
+            !path[rightNext]
+          ) {
+            current = rightNext.split("-");
+            path[rightNext] = true;
+            linearHelper();
+          } else {
+            const potentialPaths = Object.keys(path);
+            for (let i = 0; i < potentialPaths.length; i++) {
+              current = potentialPaths[i].split("-");
+              cR = Number(current[0]);
+              cC = Number(current[1]);
+              rightNext = `${cR}-${cC + 1}`;
+              rightCell = document.getElementById(rightNext);
+              upNext = `${cR - 1}-${cC}`;
+              downNext = `${cR + 1}-${cC}`;
+              leftNext = `${cR}-${cC - 1}`;
+              currentCell = document.getElementById(`${cR}-${cC}`);
+              upCell = document.getElementById(upNext);
+              downCell = document.getElementById(downNext);
+              leftCell = document.getElementById(leftNext);
+              if (upCell && upCell.className === "unvisited" && !path[upNext]) {
+                current = upNext.split("-");
+                path[upNext] = true;
+                return linearHelper();
+              } else if (
+                downCell &&
+                downCell.className === "unvisited" &&
+                !path[downNext]
+              ) {
+                current = downNext.split("-");
+                path[downNext] = true;
+                return linearHelper();
+              } else if (
+                rightCell &&
+                rightCell.className === "unvisited" &&
+                !path[rightNext]
+              ) {
+                current = rightNext.split("-");
+                path[rightNext] = true;
+                return linearHelper();
+              }
+            }
+          }
+        }
+      }, 15);
+    };
+    linearHelper();
+    this.setState({ running: false });
+  };
+
   depthFirstSearch = () => {
-    this.setState({
-      running: true
-    });
     let queue = ["15-59"];
     let path = {};
     let counter = 0;
@@ -155,11 +288,7 @@ export class TableContextProvider extends Component {
       let cR = Number(current[0]);
       let cC = Number(current[1]);
       console.log(queue[counter]);
-      // if (cR > 0 && cR === 15 && cC < this.state.cols - 1 && cC !== 10) {
-      //middle end
       this.breadthHelper(cR, cC, path, queue);
-      // } else this.depthHelper(cR, cC, path, queue); //go up first
-      // debugger;
       counter++;
       if (queue[counter] === this.state.ending) {
         break;
@@ -181,60 +310,52 @@ export class TableContextProvider extends Component {
         }, 10 * k);
       }
     }
-    // if (currentRow !== 0) {
-    //   this.depthGoUp(currentRow, currentCol);
-    // } else {
-    //   this.depthGoDown(currentRow, currentCol);
-    // }
   };
-  depthHelper = (cR, cC, path, queue) => {
-    let current = `${cR}-${cC}`;
-    let upNext = `${cR - 1}-${cC}`;
-    let downNext = `${cR + 1}-${cC}`;
-    let leftNext = `${cR}-${cC - 1}`;
-    let rightNext = `${cR}-${cC + 1}`;
-    console.log(current);
-    if (current === this.state.ending) {
-      return;
-    }
-    if (!path[leftNext] && !path[rightNext] && cR !== 0 && !path[upNext]) {
-      queue.push(upNext);
-      path[upNext] = true;
-    } else if (cR === 1 && path[rightNext] && path[downNext]) {
-      queue.push(leftNext);
-      path[leftNext] = true;
-    } else if (cR !== 0 && path[upNext] && cR !== this.state.rows - 1) {
-      queue.push(downNext);
-      path[downNext] = true;
-    } else if (cR !== 0 && path[rightNext] && path[downNext]) {
-      queue.push(upNext);
-      path[upNext] = true;
-    } else if (!path[rightNext] && cR === 0 && cC !== this.state.cols - 1) {
-      queue.push(rightNext);
-      path[rightNext] = true;
-    } else if (
-      !path[rightNext] &&
-      cR === 0 &&
-      cC === this.state.cols - 1 &&
-      cR !== this.state.rows - 1
-    ) {
-      queue.push(downNext);
-      path[downNext] = true;
-    } else if (cR === this.state.rows - 1) {
-      if (path[upNext]) {
-        queue.push(leftNext);
-        path[leftNext] = true;
-      } else {
-        queue.push(upNext);
-        path[upNext] = true;
-      }
-    }
-  };
+  // depthHelper = (cR, cC, path, queue) => {
+  //   let current = `${cR}-${cC}`;
+  //   let upNext = `${cR - 1}-${cC}`;
+  //   let downNext = `${cR + 1}-${cC}`;
+  //   let leftNext = `${cR}-${cC - 1}`;
+  //   let rightNext = `${cR}-${cC + 1}`;
+  //   console.log(current);
+  //   if (current === this.state.ending) {
+  //     return;
+  //   }
+  //   if (!path[leftNext] && !path[rightNext] && cR !== 0 && !path[upNext]) {
+  //     queue.push(upNext);
+  //     path[upNext] = true;
+  //   } else if (cR === 1 && path[rightNext] && path[downNext]) {
+  //     queue.push(leftNext);
+  //     path[leftNext] = true;
+  //   } else if (cR !== 0 && path[upNext] && cR !== this.state.rows - 1) {
+  //     queue.push(downNext);
+  //     path[downNext] = true;
+  //   } else if (cR !== 0 && path[rightNext] && path[downNext]) {
+  //     queue.push(upNext);
+  //     path[upNext] = true;
+  //   } else if (!path[rightNext] && cR === 0 && cC !== this.state.cols - 1) {
+  //     queue.push(rightNext);
+  //     path[rightNext] = true;
+  //   } else if (
+  //     !path[rightNext] &&
+  //     cR === 0 &&
+  //     cC === this.state.cols - 1 &&
+  //     cR !== this.state.rows - 1
+  //   ) {
+  //     queue.push(downNext);
+  //     path[downNext] = true;
+  //   } else if (cR === this.state.rows - 1) {
+  //     if (path[upNext]) {
+  //       queue.push(leftNext);
+  //       path[leftNext] = true;
+  //     } else {
+  //       queue.push(upNext);
+  //       path[upNext] = true;
+  //     }
+  //   }
+  // };
 
   breadthFirstSearch = () => {
-    this.setState({
-      running: true
-    });
     let queue = [this.state.current];
     let path = {};
     let counter = 0;
@@ -310,154 +431,107 @@ export class TableContextProvider extends Component {
     }
   };
 
-  knownEndPointSearch = () => {
-    console.log("running parent:");
-    // debugger
-    let current = this.state.current.split("-");
-    let cR = Number(current[0]);
-    let cC = Number(current[1]);
-    // debugger;
-    let endPoint = this.state.ending.split("-");
-    let eR = Number(endPoint[0]);
-    let eC = Number(endPoint[1]);
-    if (this.state.current === this.state.ending) {
-      this.setState({
-        running: false
-      });
-    } else {
-      this.setState({
-        running: true
-      });
-    }
+  // knownEndPointSearch = () => {
+  //   // }
+  //   this.setState({
+  //     running: true
+  //   });
+  //   let queue = [this.state.current];
+  //   let alternativePath = [];
+  //   let path = {};
+  //   let counter = 0;
+  //   let ending = this.state.ending;
+  //   let eR = ending.split("-")[0];
+  //   let eC = ending.split("-")[1];
 
-    if (cR < eR) {
-      this.knownGoDown(this.knownEndPointSearch, cR, cC, eR, eC);
-    } else if (cR > eR) {
-      this.knownGoUp(this.knownEndPointSearch, cR, cC, eR, eC);
-    } else if (cC < eC) {
-      this.knownGoRight(this.knownEndPointSearch, cR, cC, eR, eC);
-    } else if (cC > eC) {
-      this.knownGoLeft(this.knownEndPointSearch, cR, cC, eR, eC);
-    }
-  };
-  knownGoDown = (func, cR, cC, eR, eC) => {
-    const current = `${cR}-${cC}`;
-    if (current === this.state.ending) {
-      return;
-    } else if (current !== this.state.starting) {
-      let currentCell = document.getElementById(current);
-      currentCell.className = "visited";
-    }
+  //   const greedyHelper = (cR, cC, path, queue, eR, eC, reverse) => {
+  //     let downNext = `${cR + 1}-${cC}`;
+  //     let upNext = `${cR - 1}-${cC}`;
+  //     let leftNext = `${cR}-${cC - 1}`;
+  //     let rightNext = `${cR}-${cC + 1}`;
+  //     let upCell = document.getElementById(upNext);
+  //     let downCell = document.getElementById(downNext);
+  //     let leftCell = document.getElementById(leftNext);
+  //     let rightCell = document.getElementById(rightNext);
 
-    if (cR !== eR) {
-      let nextRow = cR + 1;
-      let nextCurrent = `${nextRow}-${cC}`;
-      if (nextRow === eR) {
-        setTimeout(() => {
-          this.setState(
-            {
-              current: nextCurrent
-            },
-            () => {
-              func();
-            }
-          );
-        }, 0);
-      } else {
-        setTimeout(() => {
-          this.knownGoDown(func, nextRow, cC, eR, eC);
-        }, 10);
-      }
-    }
-  };
-  knownGoLeft = (func, cR, cC, eR, eC) => {
-    const current = `${cR}-${cC}`;
-    if (current === this.state.ending) {
-      return;
-    } else if (current !== this.state.starting) {
-      let currentCell = document.getElementById(current);
-      currentCell.className = "visited";
-    }
-    if (cC !== eC) {
-      let nextCol = cC - 1;
-      let nextCurrent = `${cR}-${nextCol}`;
-      if (nextCol === eC) {
-        setTimeout(() => {
-          this.setState(
-            {
-              current: nextCurrent
-            },
-            () => {
-              func();
-            }
-          );
-        }, 0);
-      } else {
-        setTimeout(() => {
-          this.knownGoLeft(func, cR, nextCol, eR, eC);
-        }, 10);
-      }
-    }
-  };
-  knownGoRight = (func, cR, cC, eR, eC) => {
-    const current = `${cR}-${cC}`;
-    if (current === this.state.ending) {
-      return;
-    } else if (current !== this.state.starting) {
-      let currentCell = document.getElementById(current);
-      currentCell.className = "visited";
-    }
-    if (cC !== eC) {
-      let nextCol = cC + 1;
-      let nextCurrent = `${cR}-${nextCol}`;
-      if (nextCol === eC) {
-        setTimeout(() => {
-          this.setState(
-            {
-              current: nextCurrent
-            },
-            () => {
-              func();
-            }
-          );
-        }, 0);
-      } else {
-        setTimeout(() => {
-          this.knownGoRight(func, cR, nextCol, eR, eC);
-        }, 10);
-      }
-    }
-  };
-  knownGoUp = (func, cR, cC, eR, eC) => {
-    const current = `${cR}-${cC}`;
-    if (current === this.state.ending) {
-      return;
-    } else if (current !== this.state.starting) {
-      let currentCell = document.getElementById(current);
-      currentCell.className = "visited";
-    }
-    if (cR !== eR) {
-      let nextRow = cR - 1;
-      let nextCurrent = `${nextRow}-${cC}`;
+  //     if (cC < eC) {
+  //       if (rightCell.className !== "wall" && !path[rightNext]) {
+  //         path[rightNext] = true;
+  //         queue.push(rightNext);
+  //       } else if (
+  //         rightCell.className === "wall" ||
+  //         path[rightNext] ||
+  //         leftCell.className === "wall" ||
+  //         upCell.className === "wall" ||
+  //         downCell.className === "wall"
+  //       ) {
+  //         if (upCell.className !== "wall" && !path[upNext]) {
+  //           path[upNext] = true;
+  //           queue.push(upNext);
+  //           // alternativePath.push(upNext);
+  //         }
+  //         if (downCell.className !== "wall" && !path[downNext]) {
+  //           path[downNext] = true;
+  //           queue.push(downNext);
+  //           // alternativePath.push(downNext);
+  //         }
+  //         if (leftCell.className !== "wall" && !path[leftNext]) {
+  //           path[leftNext] = true;
+  //           queue.push(leftNext);
+  //           // alternativePath.push(leftNext);
+  //         }
+  //       }
+  //     }
 
-      if (nextRow === eR) {
-        setTimeout(() => {
-          this.setState(
-            {
-              current: nextCurrent
-            },
-            () => {
-              func();
-            }
-          );
-        }, 0);
-      } else {
-        setTimeout(() => {
-          this.knownGoUp(func, nextRow, cC, eR, eC);
-        }, 10);
-      }
-    }
-  };
+  //     if (Number(cC) === Number(eC)) {
+  //       if (cR < eR) {
+  //         path[downNext] = true;
+  //         queue.push(downNext);
+  //       } else {
+  //         queue.push(upNext);
+  //       }
+  //     }
+  //   };
+
+  //   // while (queue[counter] !== ending) {
+  //   while (counter < 300) {
+  //     if (queue[counter] === ending) break;
+  //     if (queue[counter] === undefined && alternativePath.length) {
+  //       let current = alternativePath.shift().split("-");
+  //       console.log(current);
+
+  //       let cR = Number(current[0]);
+  //       let cC = Number(current[1]);
+  //       greedyHelper(cR, cC, path, queue, eR, eC, true);
+  //     } else {
+  //       let current = queue[counter].split("-");
+  //       console.log(current);
+
+  //       let cR = Number(current[0]);
+  //       let cC = Number(current[1]);
+  //       greedyHelper(cR, cC, path, queue, eR, eC);
+  //       counter++;
+  //     }
+  //   }
+  //   for (let i = 1; i < queue.length; i++) {
+  //     //don't color the starting
+  //     let k = i;
+  //     if (queue[k] !== this.state.ending && queue[k] !== this.state.starting) {
+  //       setTimeout(function() {
+  //         let cell = document.getElementById(queue[k]);
+  //         cell.className = "visited";
+  //       }, 10 * k);
+  //     }
+  //     if (queue[k] === this.state.ending) {
+  //       setTimeout(function() {
+  //         let cell = document.getElementById(queue[k]);
+  //         cell.className = "ending-acquired";
+  //       }, 10 * k);
+  //     }
+  //   }
+
+  //   console.log(queue);
+  // };
 
   testingReact = () => {
     let current = this.state.current.split("-");
@@ -511,12 +585,14 @@ export class TableContextProvider extends Component {
           checkRunningFunc: this.checkRunningFunc,
           changeEndpoint: this.changeEndpoint,
           depthFirstSearch: this.depthFirstSearch,
-          refreshBoard: this.refreshBoard,
+          clearBoard: this.clearBoard,
           testingReact: this.testingReact,
           toggleWall: this.toggleWall,
           wallConstructorOn: this.wallConstructorOn,
           wallConstructorOff: this.wallConstructorOff,
-          wallBuilding: this.wallBuilding
+          wallBuilding: this.wallBuilding,
+          buildMaze: this.buildMaze,
+          linearSearch: this.linearSearch
         }}
       >
         {this.props.children}

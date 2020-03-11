@@ -10,13 +10,15 @@ class Nav extends React.Component {
           knownEndPointSearch,
           breadthFirstSearch,
           depthFirstSearch,
-          refreshBoard,
+          clearBoard,
           testingReact,
           toggleWall,
-          wallOn
+          wallOn,
+          buildMaze,
+          linearSearch
         }) => {
           return (
-            <div>
+            <div className={"nav"}>
               <div>
                 <label for={"wall"}>Wall</label>
                 <input
@@ -27,18 +29,53 @@ class Nav extends React.Component {
                 />
               </div>
               <div>
-                <button onClick={() => checkRunningFunc(refreshBoard)}>
-                  REFRESH The Page
+                <button onClick={() => checkRunningFunc(clearBoard)}>
+                  Clear Board
+                </button>
+
+                <button
+                  name={"wall"}
+                  onClick={e => checkRunningFunc(clearBoard, e)}
+                >
+                  Clear Wall
+                </button>
+
+                <button
+                  name={"visited"}
+                  onClick={e => checkRunningFunc(clearBoard, e)}
+                >
+                  Clear Path
                 </button>
               </div>
-              <button onClick={() => checkRunningFunc(knownEndPointSearch)}>
+              {/* <button onClick={() => checkRunningFunc(knownEndPointSearch)}>
                 Known Distance
-              </button>
+              </button> */}
               <button onClick={() => checkRunningFunc(breadthFirstSearch)}>
                 Breadth First Search
               </button>
               <button onClick={() => checkRunningFunc(depthFirstSearch)}>
                 Depth First Search
+              </button>
+              <button
+                onClick={e => checkRunningFunc(buildMaze, e)}
+                name={"basic"}
+              >
+                Build Basic Maze
+              </button>
+              <button
+                onClick={e => checkRunningFunc(buildMaze, e)}
+                name={"spiral"}
+              >
+                Build Spiral Maze
+              </button>
+              <button
+                onClick={e => checkRunningFunc(buildMaze, e)}
+                name={"stair"}
+              >
+                Build Stair Maze
+              </button>
+              <button onClick={e => checkRunningFunc(linearSearch)}>
+                Linear Search
               </button>
               {/* <div>
                 <button onClick={() => checkRunningFunc(testingReact)}>

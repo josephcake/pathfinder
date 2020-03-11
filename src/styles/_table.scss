@@ -1,0 +1,127 @@
+table {
+  border-collapse: collapse;
+}
+tr {
+  display: flex;
+}
+td {
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: solid 1px white;
+  width: 25px !important;
+  height: 25px !important;
+  font-size: 0px;
+  border-radius: 1px;
+  padding: 2px;
+}
+
+.starting {
+  background-color: darkmagenta;
+}
+.ending {
+  /* border: solid 2px darkmagenta; */
+  background-color: aqua;
+}
+.ending-acquired {
+  background-color: aqua;
+}
+
+.path {
+  background-color: tomato;
+  transition: background 10ms linear;
+}
+.wall {
+  border: none;
+  /* background-color: gray; */
+  animation-name: wallAnimation;
+  animation-duration: 1.5s;
+  animation-timing-function: ease-out;
+  animation-delay: 0s;
+  animation-direction: alternate;
+  animation-iteration-count: 1;
+  animation-fill-mode: forwards;
+}
+
+.unvisitedAnimated {
+  animation-name: unvisitedAnimation;
+  animation-duration: 1.5s;
+  animation-timing-function: ease-out;
+  animation-delay: 0s;
+  animation-direction: alternate;
+  animation-iteration-count: 1;
+  animation-fill-mode: forwards;
+  /* animation-play-state: running; */
+}
+.unvisited {
+  background-color: lightgray;
+  transition: all ease-in-out;
+}
+.visited {
+  border: purple solid 1px;
+  animation-name: visitedAnimation;
+  animation-duration: 1.5s;
+  animation-timing-function: ease-in;
+  animation-delay: 0s;
+  animation-direction: alternate;
+  animation-iteration-count: 1;
+  animation-fill-mode: forwards;
+  animation-play-state: running;
+}
+@keyframes wallAnimation {
+  0% {
+    transform: scale(1);
+    background-color: rgba(0, 0, 66, 0.75);
+    /* border-radius: 100%; */
+  }
+  50% {
+    transform: scale(0.8);
+    background-color: rgba(70, 70, 70, 0.75);
+  }
+  75% {
+    transform: scale(0.5);
+    background-color: rgba(121, 121, 121, 0.75);
+  }
+  100% {
+    /* transform: scale(1); */
+    background-color: rgba(4, 4, 44, 0.8);
+  }
+}
+@keyframes unvisitedAnimation {
+  0% {
+    transform: scale(1);
+    background-color: rgba(0, 0, 66, 0.75);
+    /* border-radius: 100%; */
+  }
+  50% {
+    transform: scale(0.8);
+    background-color: rgba(250, 24, 67, 0.75);
+  }
+  75% {
+    transform: scale(0.5);
+    background-color: rgba(184, 121, 129, 0.75);
+  }
+  100% {
+    /* transform: scale(1); */
+    background-color: lightgray;
+  }
+}
+@keyframes visitedAnimation {
+  0% {
+    transform: scale(0.3);
+    background-color: rgba(0, 0, 66, 0.75);
+    /* border-radius: 100%; */
+  }
+  50% {
+    background-color: rgba(250, 24, 67, 0.75);
+  }
+  75% {
+    transform: scale(1.2);
+    background-color: rgba(200, 37, 59, 0.75);
+  }
+  100% {
+    transform: scale(1);
+    background-color: rgb(114, 77, 156);
+  }
+}
