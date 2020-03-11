@@ -5,6 +5,7 @@ import * as _ from "underscore";
 import { BASIC_WALL } from "../Wall/BasicWall";
 import { SPIRAL_WALL } from "../Wall/SpiralWall";
 import { STAIR_WALL } from "../Wall/StairWall";
+import { TARGET_WALL } from "../Wall/TargetWall";
 
 export const TableContext = createContext();
 export class TableContextProvider extends Component {
@@ -95,9 +96,10 @@ export class TableContextProvider extends Component {
   };
 
   buildMaze = e => {
+    this.returnToUnvisited();
     const name = e.target.name;
-    const mazeType = ["basic", "spiral", "stair"];
-    const mazes = [BASIC_WALL, SPIRAL_WALL, STAIR_WALL];
+    const mazeType = ["basic", "spiral", "stair", "target"];
+    const mazes = [BASIC_WALL, SPIRAL_WALL, STAIR_WALL, TARGET_WALL];
     const idx = mazeType.indexOf(name);
     for (let i = 0; i < mazes[idx].length; i++) {
       let k = i;
@@ -170,7 +172,6 @@ export class TableContextProvider extends Component {
   linearSearch = () => {
     let current = this.state.current.split("-");
     let path = {};
-
     const linearHelper = () => {
       let cR = Number(current[0]);
       let cC = Number(current[1]);
@@ -431,107 +432,360 @@ export class TableContextProvider extends Component {
     }
   };
 
-  // knownEndPointSearch = () => {
-  //   // }
-  //   this.setState({
-  //     running: true
-  //   });
-  //   let queue = [this.state.current];
-  //   let alternativePath = [];
-  //   let path = {};
-  //   let counter = 0;
-  //   let ending = this.state.ending;
-  //   let eR = ending.split("-")[0];
-  //   let eC = ending.split("-")[1];
+  knownEndPointSearch = () => {
+    let current = this.state.current.split("-");
+    let path = {};
+    let ending = this.state.ending.split("-");
+    let eR = ending[0];
+    let eC = ending[1];
 
-  //   const greedyHelper = (cR, cC, path, queue, eR, eC, reverse) => {
-  //     let downNext = `${cR + 1}-${cC}`;
-  //     let upNext = `${cR - 1}-${cC}`;
-  //     let leftNext = `${cR}-${cC - 1}`;
-  //     let rightNext = `${cR}-${cC + 1}`;
-  //     let upCell = document.getElementById(upNext);
-  //     let downCell = document.getElementById(downNext);
-  //     let leftCell = document.getElementById(leftNext);
-  //     let rightCell = document.getElementById(rightNext);
+    const knownHelper = () => {
+      let cR = Number(current[0]);
+      let cC = Number(current[1]);
+      console.log(`${cR}-${cC}`);
+      // debugger;
+      if (`${cR}-${cC}` === this.state.ending) {
+        return;
+      }
+      let upNext = `${cR - 1}-${cC}`;
+      let downNext = `${cR + 1}-${cC}`;
+      let leftNext = `${cR}-${cC - 1}`;
+      let rightNext = `${cR}-${cC + 1}`;
+      let currentCell = document.getElementById(`${cR}-${cC}`);
+      let upCell = document.getElementById(upNext);
+      let downCell = document.getElementById(downNext);
+      let leftCell = document.getElementById(leftNext);
+      let rightCell = document.getElementById(rightNext);
 
-  //     if (cC < eC) {
-  //       if (rightCell.className !== "wall" && !path[rightNext]) {
-  //         path[rightNext] = true;
-  //         queue.push(rightNext);
-  //       } else if (
-  //         rightCell.className === "wall" ||
-  //         path[rightNext] ||
-  //         leftCell.className === "wall" ||
-  //         upCell.className === "wall" ||
-  //         downCell.className === "wall"
-  //       ) {
-  //         if (upCell.className !== "wall" && !path[upNext]) {
-  //           path[upNext] = true;
-  //           queue.push(upNext);
-  //           // alternativePath.push(upNext);
-  //         }
-  //         if (downCell.className !== "wall" && !path[downNext]) {
-  //           path[downNext] = true;
-  //           queue.push(downNext);
-  //           // alternativePath.push(downNext);
-  //         }
-  //         if (leftCell.className !== "wall" && !path[leftNext]) {
-  //           path[leftNext] = true;
-  //           queue.push(leftNext);
-  //           // alternativePath.push(leftNext);
-  //         }
-  //       }
-  //     }
+      setTimeout(() => {
+        if (currentCell.className !== "starting") {
+          currentCell.className = "visited";
+        }
 
-  //     if (Number(cC) === Number(eC)) {
-  //       if (cR < eR) {
-  //         path[downNext] = true;
-  //         queue.push(downNext);
-  //       } else {
-  //         queue.push(upNext);
-  //       }
-  //     }
-  //   };
+        if (
+          (leftCell && leftCell.className === "ending") ||
+          (rightCell && rightCell.className === "ending") ||
+          (upCell && upCell.className === "ending") ||
+          (downCell && downCell.className === "ending")
+        ) {
+          return;
+        }
 
-  //   // while (queue[counter] !== ending) {
-  //   while (counter < 300) {
-  //     if (queue[counter] === ending) break;
-  //     if (queue[counter] === undefined && alternativePath.length) {
-  //       let current = alternativePath.shift().split("-");
-  //       console.log(current);
+        if (cC < eC) {
+          if (
+            rightCell &&
+            rightCell.className === "unvisited" &&
+            !path[rightNext]
+          ) {
+            current = rightNext.split("-");
+            path[rightNext] = true;
+            return knownHelper();
+          } else {
+            const potentialPaths = Object.keys(path);
+            if (!potentialPaths.length || potentialPaths.length === 1) {
+              if (upCell && upCell.className === "unvisited" && !path[upNext]) {
+                current = upNext.split("-");
+                path[upNext] = true;
+                return knownHelper();
+              } else if (
+                downCell &&
+                downCell.className === "unvisited" &&
+                !path[downNext]
+              ) {
+                current = downNext.split("-");
+                path[downNext] = true;
+                return knownHelper();
+              } else if (
+                leftCell &&
+                leftCell.className === "unvisited" &&
+                !path[leftNext]
+              ) {
+                current = leftNext.split("-");
+                path[leftNext] = true;
+                return knownHelper();
+              }
+            }
+            const bottomRow = this.state.rows - 1;
+            if (cR === bottomRow) {
+              for (let i = potentialPaths.length - 1; i > 0; i--) {
+                current = potentialPaths[i].split("-");
+                cR = Number(current[0]);
+                cC = Number(current[1]);
+                upNext = `${cR - 1}-${cC}`;
+                upCell = document.getElementById(upNext);
+                if (
+                  upCell &&
+                  upCell.className === "unvisited" &&
+                  !path[upNext]
+                ) {
+                  current = upNext.split("-");
+                  path[upNext] = true;
+                  return knownHelper();
+                }
+              }
+            } else if (cR === 0) {
+              for (let i = potentialPaths.length - 1; i > 0; i--) {
+                current = potentialPaths[i].split("-");
+                cR = Number(current[0]);
+                cC = Number(current[1]);
+                downNext = `${cR + 1}-${cC}`;
+                downCell = document.getElementById(downNext);
+                if (
+                  downCell &&
+                  downCell.className === "unvisited" &&
+                  !path[downNext]
+                ) {
+                  current = downNext.split("-");
+                  path[downNext] = true;
+                  return knownHelper();
+                }
+              }
+            } else {
+              for (let i = potentialPaths.length - 1; i > 0; i--) {
+                current = potentialPaths[i].split("-");
+                cR = Number(current[0]);
+                cC = Number(current[1]);
+                rightNext = `${cR}-${cC + 1}`;
+                rightCell = document.getElementById(rightNext);
+                upNext = `${cR - 1}-${cC}`;
+                downNext = `${cR + 1}-${cC}`;
+                leftNext = `${cR}-${cC - 1}`;
+                currentCell = document.getElementById(`${cR}-${cC}`);
+                upCell = document.getElementById(upNext);
+                downCell = document.getElementById(downNext);
+                leftCell = document.getElementById(leftNext);
 
-  //       let cR = Number(current[0]);
-  //       let cC = Number(current[1]);
-  //       greedyHelper(cR, cC, path, queue, eR, eC, true);
-  //     } else {
-  //       let current = queue[counter].split("-");
-  //       console.log(current);
+                if (
+                  upCell &&
+                  upCell.className === "unvisited" &&
+                  !path[upNext]
+                ) {
+                  current = upNext.split("-");
+                  path[upNext] = true;
+                  return knownHelper();
+                } else if (
+                  downCell &&
+                  downCell.className === "unvisited" &&
+                  !path[downNext]
+                ) {
+                  current = downNext.split("-");
+                  path[downNext] = true;
+                  return knownHelper();
+                } else if (
+                  leftCell &&
+                  leftCell.className === "unvisited" &&
+                  !path[leftNext]
+                ) {
+                  current = leftNext.split("-");
+                  path[leftNext] = true;
+                  return knownHelper();
+                }
+              }
+            }
+          }
+        } else if (cC > eC) {
+          if (
+            leftCell &&
+            leftCell.className === "unvisited" &&
+            !path[leftNext]
+          ) {
+            current = leftNext.split("-");
+            path[leftNext] = true;
+            return knownHelper();
+          } else {
+            const potentialPaths = Object.keys(path);
+            const bottomRow = this.state.rows - 1;
+            if (cR === 0) {
+              for (let i = potentialPaths.length - 1; i > 0; i--) {
+                current = potentialPaths[i].split("-");
+                cR = Number(current[0]);
+                cC = Number(current[1]);
+                downNext = `${cR + 1}-${cC}`;
+                downCell = document.getElementById(downNext);
+                if (
+                  downCell &&
+                  downCell.className === "unvisited" &&
+                  !path[downNext]
+                ) {
+                  current = downNext.split("-");
+                  path[downNext] = true;
+                  return knownHelper();
+                }
+              }
+            } else if (cR === bottomRow) {
+              for (let i = potentialPaths.length - 1; i > 0; i--) {
+                current = potentialPaths[i].split("-");
+                cR = Number(current[0]);
+                cC = Number(current[1]);
+                upNext = `${cR - 1}-${cC}`;
+                upCell = document.getElementById(upNext);
 
-  //       let cR = Number(current[0]);
-  //       let cC = Number(current[1]);
-  //       greedyHelper(cR, cC, path, queue, eR, eC);
-  //       counter++;
-  //     }
-  //   }
-  //   for (let i = 1; i < queue.length; i++) {
-  //     //don't color the starting
-  //     let k = i;
-  //     if (queue[k] !== this.state.ending && queue[k] !== this.state.starting) {
-  //       setTimeout(function() {
-  //         let cell = document.getElementById(queue[k]);
-  //         cell.className = "visited";
-  //       }, 10 * k);
-  //     }
-  //     if (queue[k] === this.state.ending) {
-  //       setTimeout(function() {
-  //         let cell = document.getElementById(queue[k]);
-  //         cell.className = "ending-acquired";
-  //       }, 10 * k);
-  //     }
-  //   }
+                if (
+                  upCell &&
+                  upCell.className === "unvisited" &&
+                  !path[upNext]
+                ) {
+                  current = upNext.split("-");
+                  path[upNext] = true;
+                  return knownHelper();
+                }
+              }
+            } else {
+              for (let i = potentialPaths.length - 1; i > 0; i--) {
+                current = potentialPaths[i].split("-");
+                cR = Number(current[0]);
+                cC = Number(current[1]);
+                rightNext = `${cR}-${cC + 1}`;
+                rightCell = document.getElementById(rightNext);
+                upNext = `${cR - 1}-${cC}`;
+                downNext = `${cR + 1}-${cC}`;
+                leftNext = `${cR}-${cC - 1}`;
+                currentCell = document.getElementById(`${cR}-${cC}`);
+                upCell = document.getElementById(upNext);
+                downCell = document.getElementById(downNext);
+                leftCell = document.getElementById(leftNext);
+                if (
+                  upCell &&
+                  upCell.className === "unvisited" &&
+                  !path[upNext]
+                ) {
+                  current = upNext.split("-");
+                  path[upNext] = true;
+                  return knownHelper();
+                } else if (
+                  downCell &&
+                  downCell.className === "unvisited" &&
+                  !path[downNext]
+                ) {
+                  current = downNext.split("-");
+                  path[downNext] = true;
+                  return knownHelper();
+                } else if (
+                  rightCell &&
+                  rightCell.className === "unvisited" &&
+                  !path[rightNext]
+                ) {
+                  current = rightNext.split("-");
+                  path[rightNext] = true;
+                  return knownHelper();
+                }
+              }
+            }
+          }
+        }
+        if (cR > eR) {
+          if (upCell && upCell.className === "unvisited" && !path[upNext]) {
+            current = upNext.split("-");
+            path[upNext] = true;
+            return knownHelper();
+          } else {
+            const potentialPaths = Object.keys(path);
+            for (let i = potentialPaths.length - 1; i > 0; i--) {
+              current = potentialPaths[i].split("-");
+              cR = Number(current[0]);
+              cC = Number(current[1]);
+              rightNext = `${cR}-${cC + 1}`;
+              rightCell = document.getElementById(rightNext);
+              upNext = `${cR - 1}-${cC}`;
+              downNext = `${cR + 1}-${cC}`;
+              leftNext = `${cR}-${cC - 1}`;
+              currentCell = document.getElementById(`${cR}-${cC}`);
+              upCell = document.getElementById(upNext);
+              downCell = document.getElementById(downNext);
+              leftCell = document.getElementById(leftNext);
+              if (cC < eC) {
+                if (
+                  leftCell &&
+                  leftCell.className === "unvisited" &&
+                  !path[leftNext]
+                ) {
+                  current = leftNext.split("-");
+                  path[leftNext] = true;
+                  return knownHelper();
+                }
+              } else {
+                if (
+                  rightCell &&
+                  rightCell.className === "unvisited" &&
+                  !path[rightNext]
+                ) {
+                  current = rightNext.split("-");
+                  path[rightNext] = true;
+                  return knownHelper();
+                } else if (
+                  downCell &&
+                  downCell.className === "unvisited" &&
+                  !path[downNext]
+                ) {
+                  current = downNext.split("-");
+                  path[downNext] = true;
+                  return knownHelper();
+                }
+              }
+            }
+          }
+        } else if (cR < eR) {
+          if (
+            downCell &&
+            downCell.className === "unvisited" &&
+            !path[downNext]
+          ) {
+            current = downNext.split("-");
+            path[downNext] = true;
+            return knownHelper();
+          } else {
+            const potentialPaths = Object.keys(path);
+            for (let i = potentialPaths.length - 1; i > 0; i--) {
+              current = potentialPaths[i].split("-");
+              cR = Number(current[0]);
+              cC = Number(current[1]);
+              rightNext = `${cR}-${cC + 1}`;
+              rightCell = document.getElementById(rightNext);
+              upNext = `${cR - 1}-${cC}`;
+              downNext = `${cR + 1}-${cC}`;
+              leftNext = `${cR}-${cC - 1}`;
+              currentCell = document.getElementById(`${cR}-${cC}`);
+              upCell = document.getElementById(upNext);
+              downCell = document.getElementById(downNext);
+              leftCell = document.getElementById(leftNext);
+              if (cC < eC) {
+                if (
+                  leftCell &&
+                  leftCell.className === "unvisited" &&
+                  !path[leftNext]
+                ) {
+                  current = leftNext.split("-");
+                  path[leftNext] = true;
+                  return knownHelper();
+                }
+              } else {
+                if (
+                  rightCell &&
+                  rightCell.className === "unvisited" &&
+                  !path[rightNext]
+                ) {
+                  current = rightNext.split("-");
+                  path[rightNext] = true;
+                  return knownHelper();
+                } else if (
+                  upCell &&
+                  upCell.className === "unvisited" &&
+                  !path[upNext]
+                ) {
+                  current = upNext.split("-");
+                  path[upNext] = true;
+                  return knownHelper();
+                }
+              }
+            }
+          }
+        }
+      }, 15);
+    };
 
-  //   console.log(queue);
-  // };
+    knownHelper();
+    this.setState({ running: false });
+  };
 
   testingReact = () => {
     let current = this.state.current.split("-");

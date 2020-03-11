@@ -47,9 +47,9 @@ class Nav extends React.Component {
                   Clear Path
                 </button>
               </div>
-              {/* <button onClick={() => checkRunningFunc(knownEndPointSearch)}>
-                Known Distance
-              </button> */}
+              <button onClick={() => checkRunningFunc(knownEndPointSearch)}>
+                Known Direction
+              </button>
               <button onClick={() => checkRunningFunc(breadthFirstSearch)}>
                 Breadth First Search
               </button>
@@ -67,6 +67,12 @@ class Nav extends React.Component {
                 name={"spiral"}
               >
                 Build Spiral Maze
+              </button>
+              <button
+                onClick={e => checkRunningFunc(buildMaze, e)}
+                name={"target"}
+              >
+                Build Target Maze
               </button>
               <button
                 onClick={e => checkRunningFunc(buildMaze, e)}
