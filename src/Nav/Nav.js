@@ -7,17 +7,12 @@ class Nav extends React.Component {
       <TableContext.Consumer>
         {({
           checkRunningFunc,
-          knownEndPointSearch,
-          breadthFirstSearch,
-          depthFirstSearch,
           clearBoard,
-          testingReact,
           toggleWall,
           wallOn,
           buildMaze,
-          linearSearch,
-          maze,
-          selectAlgorithm
+          selectAlgorithm,
+          go
         }) => {
           return (
             <div className={"nav"}>
@@ -67,7 +62,12 @@ class Nav extends React.Component {
                 </button>
               </div> */}
               <div className={"nav__action nav__items"}>
-                <button className={"nav__button go"}>Go!</button>
+                <button
+                  onClick={() => checkRunningFunc(go)}
+                  className={"nav__button go"}
+                >
+                  Go!
+                </button>
               </div>
 
               <div className={"nav__board nav__items"}>

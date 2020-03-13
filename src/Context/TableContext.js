@@ -14,8 +14,8 @@ export class TableContextProvider extends Component {
     ending: "15-42",
     rows: 30,
     cols: 60,
-    maze: "Maze",
-    algorithm: "none",
+    maze: "none",
+    algorithm: "algorithm",
     current: "15-12",
     running: false,
     refresh: false,
@@ -203,21 +203,24 @@ export class TableContextProvider extends Component {
   };
 
   selectAlgorithm = e => {
+    let algorithm = e.target.value;
+    this.setState({ running: false, algorithm });
+  };
+  go = () => {
     this.returnToUnvisited("visited");
-
-    let name = e.target.value;
+    const name = this.state.algorithm;
     if (name === "algorithm") {
       this.setState({ running: false });
       return;
     }
-
-    let algorithmNames = [
+    // debugger;
+    const algorithmNames = [
       "knownEndPointSearch",
       "linearSearch",
       "breadthFirstSearch",
       "depthFirstSearch"
     ];
-    let algorithms = [
+    const algorithms = [
       this.knownEndPointSearch,
       this.linearSearch,
       this.breadthFirstSearch,
@@ -345,13 +348,17 @@ export class TableContextProvider extends Component {
     let path = {};
     let counter = 0;
     while (queue[counter] !== this.state.ending) {
-      let current = queue[counter].split("-");
-      let cR = Number(current[0]);
-      let cC = Number(current[1]);
-      // console.log(queue[counter]);
-      this.breadthHelper(cR, cC, path, queue);
-      counter++;
-      if (queue[counter] === this.state.ending) {
+      try {
+        let current = queue[counter].split("-");
+        let cR = Number(current[0]);
+        let cC = Number(current[1]);
+        this.breadthHelper(cR, cC, path, queue);
+        counter++;
+        if (queue[counter] === this.state.ending) {
+          break;
+        }
+      } catch (err) {
+        console.log(err);
         break;
       }
     }
@@ -378,12 +385,17 @@ export class TableContextProvider extends Component {
     let path = {};
     let counter = 0;
     while (queue[counter] !== this.state.ending) {
-      let current = queue[counter].split("-");
-      let cR = Number(current[0]);
-      let cC = Number(current[1]);
-      this.breadthHelper(cR, cC, path, queue);
-      counter++;
-      if (queue[counter] === this.state.ending) {
+      try {
+        let current = queue[counter].split("-");
+        let cR = Number(current[0]);
+        let cC = Number(current[1]);
+        this.breadthHelper(cR, cC, path, queue);
+        counter++;
+        if (queue[counter] === this.state.ending) {
+          break;
+        }
+      } catch (err) {
+        console.log(err);
         break;
       }
     }
@@ -403,8 +415,6 @@ export class TableContextProvider extends Component {
         }, 10 * k);
       }
     }
-
-    // console.log(queue);
   };
   breadthHelper = (cR, cC, path, queue) => {
     let upNext = `${cR - 1}-${cC}`;
@@ -487,8 +497,9 @@ export class TableContextProvider extends Component {
         ) {
           return;
         }
-
         if (cC < eC) {
+          // debugger;
+
           if (
             rightCell &&
             rightCell.className === "unvisited" &&
@@ -522,81 +533,56 @@ export class TableContextProvider extends Component {
                 return knownHelper();
               }
             }
-            const bottomRow = this.state.rows - 1;
-            if (cR === bottomRow) {
-              for (let i = potentialPaths.length - 1; i > 0; i--) {
-                current = potentialPaths[i].split("-");
-                cR = Number(current[0]);
-                cC = Number(current[1]);
-                upNext = `${cR - 1}-${cC}`;
-                upCell = document.getElementById(upNext);
-                if (
-                  upCell &&
-                  upCell.className === "unvisited" &&
-                  !path[upNext]
-                ) {
-                  current = upNext.split("-");
-                  path[upNext] = true;
-                  return knownHelper();
-                }
-              }
-            } else if (cR === 0) {
-              for (let i = potentialPaths.length - 1; i > 0; i--) {
-                current = potentialPaths[i].split("-");
-                cR = Number(current[0]);
-                cC = Number(current[1]);
-                downNext = `${cR + 1}-${cC}`;
-                downCell = document.getElementById(downNext);
-                if (
-                  downCell &&
-                  downCell.className === "unvisited" &&
-                  !path[downNext]
-                ) {
-                  current = downNext.split("-");
-                  path[downNext] = true;
-                  return knownHelper();
-                }
-              }
-            } else {
-              for (let i = potentialPaths.length - 1; i > 0; i--) {
-                current = potentialPaths[i].split("-");
-                cR = Number(current[0]);
-                cC = Number(current[1]);
-                rightNext = `${cR}-${cC + 1}`;
-                rightCell = document.getElementById(rightNext);
-                upNext = `${cR - 1}-${cC}`;
-                downNext = `${cR + 1}-${cC}`;
-                leftNext = `${cR}-${cC - 1}`;
-                currentCell = document.getElementById(`${cR}-${cC}`);
-                upCell = document.getElementById(upNext);
-                downCell = document.getElementById(downNext);
-                leftCell = document.getElementById(leftNext);
 
-                if (
-                  upCell &&
-                  upCell.className === "unvisited" &&
-                  !path[upNext]
-                ) {
-                  current = upNext.split("-");
-                  path[upNext] = true;
-                  return knownHelper();
-                } else if (
-                  downCell &&
-                  downCell.className === "unvisited" &&
-                  !path[downNext]
-                ) {
-                  current = downNext.split("-");
-                  path[downNext] = true;
-                  return knownHelper();
-                } else if (
-                  leftCell &&
-                  leftCell.className === "unvisited" &&
-                  !path[leftNext]
-                ) {
-                  current = leftNext.split("-");
-                  path[leftNext] = true;
-                  return knownHelper();
-                }
+            for (let i = potentialPaths.length - 1; i > 0; i--) {
+              current = potentialPaths[i].split("-");
+              cR = Number(current[0]);
+              cC = Number(current[1]);
+              rightNext = `${cR}-${cC + 1}`;
+              rightCell = document.getElementById(rightNext);
+              upNext = `${cR - 1}-${cC}`;
+              downNext = `${cR + 1}-${cC}`;
+              upCell = document.getElementById(upNext);
+              downCell = document.getElementById(downNext);
+              if (
+                rightCell &&
+                rightCell.className === "unvisited" &&
+                !path[rightNext]
+              ) {
+                current = rightNext.split("-");
+                path[rightNext] = true;
+                return knownHelper();
+              }
+              if (upCell && upCell.className === "unvisited" && !path[upNext]) {
+                current = upNext.split("-");
+                path[upNext] = true;
+                return knownHelper();
+              }
+              if (
+                downCell &&
+                downCell.className === "unvisited" &&
+                !path[downNext]
+              ) {
+                current = downNext.split("-");
+                path[downNext] = true;
+                return knownHelper();
+              }
+            }
+
+            for (let i = potentialPaths.length - 1; i > 0; i--) {
+              current = potentialPaths[i].split("-");
+              cR = Number(current[0]);
+              cC = Number(current[1]);
+              leftNext = `${cR}-${cC - 1}`;
+              leftCell = document.getElementById(leftNext);
+              if (
+                leftCell &&
+                leftCell.className === "unvisited" &&
+                !path[leftNext]
+              ) {
+                current = leftNext.split("-");
+                path[leftNext] = true;
+                return knownHelper();
               }
             }
           }
@@ -611,81 +597,55 @@ export class TableContextProvider extends Component {
             return knownHelper();
           } else {
             const potentialPaths = Object.keys(path);
-            const bottomRow = this.state.rows - 1;
-            if (cR === 0) {
-              for (let i = potentialPaths.length - 1; i > 0; i--) {
-                current = potentialPaths[i].split("-");
-                cR = Number(current[0]);
-                cC = Number(current[1]);
-                downNext = `${cR + 1}-${cC}`;
-                downCell = document.getElementById(downNext);
-                if (
-                  downCell &&
-                  downCell.className === "unvisited" &&
-                  !path[downNext]
-                ) {
-                  current = downNext.split("-");
-                  path[downNext] = true;
-                  return knownHelper();
-                }
+            for (let i = potentialPaths.length - 1; i > 0; i--) {
+              current = potentialPaths[i].split("-");
+              cR = Number(current[0]);
+              cC = Number(current[1]);
+              upNext = `${cR - 1}-${cC}`;
+              downNext = `${cR + 1}-${cC}`;
+              upCell = document.getElementById(upNext);
+              downCell = document.getElementById(downNext);
+              leftNext = `${cR}-${cC - 1}`;
+              leftCell = document.getElementById(leftNext);
+              if (
+                leftCell &&
+                leftCell.className === "unvisited" &&
+                !path[leftNext]
+              ) {
+                current = leftNext.split("-");
+                path[leftNext] = true;
+                return knownHelper();
               }
-            } else if (cR === bottomRow) {
-              for (let i = potentialPaths.length - 1; i > 0; i--) {
-                current = potentialPaths[i].split("-");
-                cR = Number(current[0]);
-                cC = Number(current[1]);
-                upNext = `${cR - 1}-${cC}`;
-                upCell = document.getElementById(upNext);
+              if (upCell && upCell.className === "unvisited" && !path[upNext]) {
+                current = upNext.split("-");
+                path[upNext] = true;
+                return knownHelper();
+              }
+              if (
+                downCell &&
+                downCell.className === "unvisited" &&
+                !path[downNext]
+              ) {
+                current = downNext.split("-");
+                path[downNext] = true;
+                return knownHelper();
+              }
+            }
 
-                if (
-                  upCell &&
-                  upCell.className === "unvisited" &&
-                  !path[upNext]
-                ) {
-                  current = upNext.split("-");
-                  path[upNext] = true;
-                  return knownHelper();
-                }
-              }
-            } else {
-              for (let i = potentialPaths.length - 1; i > 0; i--) {
-                current = potentialPaths[i].split("-");
-                cR = Number(current[0]);
-                cC = Number(current[1]);
-                rightNext = `${cR}-${cC + 1}`;
-                rightCell = document.getElementById(rightNext);
-                upNext = `${cR - 1}-${cC}`;
-                downNext = `${cR + 1}-${cC}`;
-                leftNext = `${cR}-${cC - 1}`;
-                currentCell = document.getElementById(`${cR}-${cC}`);
-                upCell = document.getElementById(upNext);
-                downCell = document.getElementById(downNext);
-                leftCell = document.getElementById(leftNext);
-                if (
-                  upCell &&
-                  upCell.className === "unvisited" &&
-                  !path[upNext]
-                ) {
-                  current = upNext.split("-");
-                  path[upNext] = true;
-                  return knownHelper();
-                } else if (
-                  downCell &&
-                  downCell.className === "unvisited" &&
-                  !path[downNext]
-                ) {
-                  current = downNext.split("-");
-                  path[downNext] = true;
-                  return knownHelper();
-                } else if (
-                  rightCell &&
-                  rightCell.className === "unvisited" &&
-                  !path[rightNext]
-                ) {
-                  current = rightNext.split("-");
-                  path[rightNext] = true;
-                  return knownHelper();
-                }
+            for (let i = potentialPaths.length - 1; i > 0; i--) {
+              current = potentialPaths[i].split("-");
+              cR = Number(current[0]);
+              cC = Number(current[1]);
+              rightNext = `${cR}-${cC + 1}`;
+              rightCell = document.getElementById(rightNext);
+              if (
+                rightCell &&
+                rightCell.className === "unvisited" &&
+                !path[rightNext]
+              ) {
+                current = rightNext.split("-");
+                path[rightNext] = true;
+                return knownHelper();
               }
             }
           }
@@ -697,47 +657,63 @@ export class TableContextProvider extends Component {
             return knownHelper();
           } else {
             const potentialPaths = Object.keys(path);
+
             for (let i = potentialPaths.length - 1; i > 0; i--) {
               current = potentialPaths[i].split("-");
               cR = Number(current[0]);
               cC = Number(current[1]);
+              upNext = `${cR - 1}-${cC}`;
+              upCell = document.getElementById(upNext);
+              if (upCell && upCell.className === "unvisited" && !path[upNext]) {
+                current = upNext.split("-");
+                path[upNext] = true;
+                return knownHelper();
+              }
+            }
+
+            for (let i = potentialPaths.length - 1; i > 0; i--) {
+              current = potentialPaths[i].split("-");
+              cR = Number(current[0]);
+              cC = Number(current[1]);
+              leftNext = `${cR}-${cC - 1}`;
+              leftCell = document.getElementById(leftNext);
               rightNext = `${cR}-${cC + 1}`;
               rightCell = document.getElementById(rightNext);
-              upNext = `${cR - 1}-${cC}`;
               downNext = `${cR + 1}-${cC}`;
-              leftNext = `${cR}-${cC - 1}`;
-              currentCell = document.getElementById(`${cR}-${cC}`);
-              upCell = document.getElementById(upNext);
               downCell = document.getElementById(downNext);
-              leftCell = document.getElementById(leftNext);
-              if (cC < eC) {
-                if (
-                  leftCell &&
-                  leftCell.className === "unvisited" &&
-                  !path[leftNext]
-                ) {
-                  current = leftNext.split("-");
-                  path[leftNext] = true;
-                  return knownHelper();
-                }
-              } else {
-                if (
-                  rightCell &&
-                  rightCell.className === "unvisited" &&
-                  !path[rightNext]
-                ) {
-                  current = rightNext.split("-");
-                  path[rightNext] = true;
-                  return knownHelper();
-                } else if (
-                  downCell &&
-                  downCell.className === "unvisited" &&
-                  !path[downNext]
-                ) {
-                  current = downNext.split("-");
-                  path[downNext] = true;
-                  return knownHelper();
-                }
+
+              if (
+                leftCell &&
+                leftCell.className === "unvisited" &&
+                !path[leftNext]
+              ) {
+                current = leftNext.split("-");
+                path[leftNext] = true;
+                return knownHelper();
+              } else if (
+                rightCell &&
+                rightCell.className === "unvisited" &&
+                !path[rightNext]
+              ) {
+                current = rightNext.split("-");
+                path[rightNext] = true;
+                return knownHelper();
+              }
+            }
+            for (let i = potentialPaths.length - 1; i > 0; i--) {
+              current = potentialPaths[i].split("-");
+              cR = Number(current[0]);
+              cC = Number(current[1]);
+              downNext = `${cR + 1}-${cC}`;
+              downCell = document.getElementById(downNext);
+              if (
+                downCell &&
+                downCell.className === "unvisited" &&
+                !path[downNext]
+              ) {
+                current = downNext.split("-");
+                path[downNext] = true;
+                return knownHelper();
               }
             }
           }
@@ -756,43 +732,55 @@ export class TableContextProvider extends Component {
               current = potentialPaths[i].split("-");
               cR = Number(current[0]);
               cC = Number(current[1]);
+              downNext = `${cR + 1}-${cC}`;
+              downCell = document.getElementById(downNext);
+              if (
+                downCell &&
+                downCell.className === "unvisited" &&
+                !path[downNext]
+              ) {
+                current = downNext.split("-");
+                path[downNext] = true;
+                return knownHelper();
+              }
+            }
+
+            for (let i = potentialPaths.length - 1; i > 0; i--) {
+              current = potentialPaths[i].split("-");
+              cR = Number(current[0]);
+              cC = Number(current[1]);
+              leftNext = `${cR}-${cC - 1}`;
+              leftCell = document.getElementById(leftNext);
               rightNext = `${cR}-${cC + 1}`;
               rightCell = document.getElementById(rightNext);
+              if (
+                leftCell &&
+                leftCell.className === "unvisited" &&
+                !path[leftNext]
+              ) {
+                current = leftNext.split("-");
+                path[leftNext] = true;
+                return knownHelper();
+              } else if (
+                rightCell &&
+                rightCell.className === "unvisited" &&
+                !path[rightNext]
+              ) {
+                current = rightNext.split("-");
+                path[rightNext] = true;
+                return knownHelper();
+              }
+            }
+            for (let i = potentialPaths.length - 1; i > 0; i--) {
+              current = potentialPaths[i].split("-");
+              cR = Number(current[0]);
+              cC = Number(current[1]);
               upNext = `${cR - 1}-${cC}`;
-              downNext = `${cR + 1}-${cC}`;
-              leftNext = `${cR}-${cC - 1}`;
-              currentCell = document.getElementById(`${cR}-${cC}`);
               upCell = document.getElementById(upNext);
-              downCell = document.getElementById(downNext);
-              leftCell = document.getElementById(leftNext);
-              if (cC < eC) {
-                if (
-                  leftCell &&
-                  leftCell.className === "unvisited" &&
-                  !path[leftNext]
-                ) {
-                  current = leftNext.split("-");
-                  path[leftNext] = true;
-                  return knownHelper();
-                }
-              } else {
-                if (
-                  rightCell &&
-                  rightCell.className === "unvisited" &&
-                  !path[rightNext]
-                ) {
-                  current = rightNext.split("-");
-                  path[rightNext] = true;
-                  return knownHelper();
-                } else if (
-                  upCell &&
-                  upCell.className === "unvisited" &&
-                  !path[upNext]
-                ) {
-                  current = upNext.split("-");
-                  path[upNext] = true;
-                  return knownHelper();
-                }
+              if (upCell && upCell.className === "unvisited" && !path[upNext]) {
+                current = upNext.split("-");
+                path[upNext] = true;
+                return knownHelper();
               }
             }
           }
@@ -802,28 +790,6 @@ export class TableContextProvider extends Component {
 
     knownHelper();
     this.setState({ running: false });
-  };
-
-  testingReact = () => {
-    let current = this.state.current.split("-");
-    let cR = Number(current[0]);
-    let cC = Number(current[1]);
-    // debugger;
-    let endPoint = this.state.ending.split("-");
-    let eR = Number(endPoint[0]);
-    let eC = Number(endPoint[1]);
-    const nextCurrent = `${cR}-${cC + 1}`;
-    setTimeout(() => {
-      if (cC !== eC && cC < 100) {
-        // debugger;
-        this.setState(
-          {
-            current: nextCurrent
-          },
-          () => this.testingReact()
-        );
-      }
-    }, 5);
   };
 
   changeEndpoint = e => {
@@ -851,21 +817,17 @@ export class TableContextProvider extends Component {
       <TableContext.Provider
         value={{
           ...this.state,
-          knownEndPointSearch: this.knownEndPointSearch,
-          breadthFirstSearch: this.breadthFirstSearch,
           checkRunningFunc: this.checkRunningFunc,
           changeEndpoint: this.changeEndpoint,
-          depthFirstSearch: this.depthFirstSearch,
           clearBoard: this.clearBoard,
-          testingReact: this.testingReact,
           toggleWall: this.toggleWall,
           wallConstructorOn: this.wallConstructorOn,
           wallConstructorOff: this.wallConstructorOff,
           wallBuilding: this.wallBuilding,
           buildMaze: this.buildMaze,
-          linearSearch: this.linearSearch,
           randomlyGeneratedMaze: this.randomlyGeneratedMaze,
-          selectAlgorithm: this.selectAlgorithm
+          selectAlgorithm: this.selectAlgorithm,
+          go: this.go
         }}
       >
         {this.props.children}

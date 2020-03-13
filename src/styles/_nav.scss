@@ -20,11 +20,12 @@
     outline: none;
     padding: 0 5px;
     margin: 0 1px;
+    cursor: pointer;
+
     &.go {
       width: 80px;
       font-size: 2rem;
       padding: 0 10px;
-      cursor: pointer;
       color: mediumspringgreen;
     }
   }
