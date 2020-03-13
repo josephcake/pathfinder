@@ -26,40 +26,19 @@ class Nav extends React.Component {
                   className={"nav__select"}
                   onChange={e => checkRunningFunc(selectAlgorithm, e)}
                 >
-                  <option>- Select An Algorithm-</option>
+                  <option value={"algorithm"}>- Select An Algorithm -</option>
 
-                  <option
-                    className={"nav__button"}
-                    onClick={() => checkRunningFunc(knownEndPointSearch)}
-                    value={"knownEndPointSearch"}
-                  >
-                    Known Direction
-                  </option>
-                  <option
-                    className={"nav__button"}
-                    onClick={() => checkRunningFunc(linearSearch)}
-                    value={"linearSearch"}
-                  >
-                    Linear Search
-                  </option>
-                  <option
-                    className={"nav__button"}
-                    onClick={() => checkRunningFunc(breadthFirstSearch)}
-                    value={"breadthFirstSearch"}
-                  >
+                  <option value={"knownEndPointSearch"}>Known Direction</option>
+                  <option value={"linearSearch"}>Linear Search</option>
+                  <option value={"breadthFirstSearch"}>
                     Breadth First Search
                   </option>
-                  <option
-                    className={"nav__button"}
-                    onClick={() => checkRunningFunc(depthFirstSearch)}
-                    value={"depthFirstSearch"}
-                  >
-                    Depth First Search
-                  </option>
+                  <option value={"depthFirstSearch"}>Depth First Search</option>
                 </select>
               </div>
               <div className={"nav__wall nav__items"}>
-                <div>
+                <div className={"nav__wall_self"}>
+                  <h5>Build your own</h5>
                   <label className={"switch"}>
                     <input
                       type={"checkbox"}
@@ -71,26 +50,14 @@ class Nav extends React.Component {
                 </div>
                 <select
                   className={"nav__select"}
-                  value={maze}
                   onChange={e => checkRunningFunc(buildMaze, e)}
                 >
-                  <option>- Build A Maze-</option>
-                  <option className={"nav__button"} name={"basic"}>
-                    Basic
-                  </option>
-                  <option className={"nav__button"} name={"spiral"}>
-                    Spiral
-                  </option>
-                  <option className={"nav__button"} name={"target"}>
-                    Target
-                  </option>
-                  <option className={"nav__button"} name={"stair"}>
-                    Stair
-                  </option>
-                  <option className={"nav__button"} name={"random"}>
-                    {" "}
-                    Random
-                  </option>
+                  <option value={"maze"}>- Build A Maze -</option>
+                  <option value={"basic"}>Basic</option>
+                  <option value={"spiral"}>Spiral</option>
+                  <option value={"target"}>Target</option>
+                  <option value={"stair"}>Stair</option>
+                  <option value={"random"}>Random</option>
                 </select>
               </div>
 
@@ -99,6 +66,10 @@ class Nav extends React.Component {
                   TESTING REACT VS DOM
                 </button>
               </div> */}
+              <div className={"nav__action nav__items"}>
+                <button className={"nav__button go"}>Go!</button>
+              </div>
+
               <div className={"nav__board nav__items"}>
                 <button
                   className={"nav__button"}

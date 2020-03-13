@@ -99,13 +99,19 @@ export class TableContextProvider extends Component {
 
   buildMaze = e => {
     this.returnToUnvisited();
+
     const name = e.target.value.toLowerCase();
+    if (name === "maze") {
+      this.setState({ running: false });
+      return;
+    }
     const mazeType = ["basic", "spiral", "stair", "target"];
     if (name === "random") {
       this.randomlyGeneratedMaze();
     } else {
       const mazes = [BASIC_WALL, SPIRAL_WALL, STAIR_WALL, TARGET_WALL];
       const idx = mazeType.indexOf(name);
+
       for (let i = 0; i < mazes[idx].length; i++) {
         let k = i;
         let cell = document.getElementById(mazes[idx][k]);
@@ -161,7 +167,7 @@ export class TableContextProvider extends Component {
   returnToUnvisited = e => {
     // debugger;
     if (e) {
-      const name = e.target.name;
+      let name = e.target ? e.target.name : e;
 
       const cellsHTML = document.getElementsByClassName(name);
       const cellsArr = Array.from(cellsHTML);
@@ -197,9 +203,14 @@ export class TableContextProvider extends Component {
   };
 
   selectAlgorithm = e => {
-    this.returnToUnvisited();
+    this.returnToUnvisited("visited");
 
     let name = e.target.value;
+    if (name === "algorithm") {
+      this.setState({ running: false });
+      return;
+    }
+
     let algorithmNames = [
       "knownEndPointSearch",
       "linearSearch",
@@ -213,8 +224,9 @@ export class TableContextProvider extends Component {
       this.depthFirstSearch
     ];
     const selected = algorithmNames.indexOf(name);
+    // console.log(selected);
+
     algorithms[selected]();
-    // debugger;
   };
 
   linearSearch = () => {
