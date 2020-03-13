@@ -33,7 +33,10 @@ export class TableContextProvider extends Component {
       }
     };
     const observer = new MutationObserver(mutation);
-    observer.observe(node, { attributes: true, attributeFilter: ["class"] });
+    observer.observe(node, {
+      attributes: true,
+      attributeFilter: ["class"]
+    });
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -108,6 +111,8 @@ export class TableContextProvider extends Component {
     const mazeType = ["basic", "spiral", "stair", "target"];
     if (name === "random") {
       this.randomlyGeneratedMaze();
+    } else if (name === "vertical") {
+      this.verticalGeneratedMaze();
     } else {
       const mazes = [BASIC_WALL, SPIRAL_WALL, STAIR_WALL, TARGET_WALL];
       const idx = mazeType.indexOf(name);
@@ -124,6 +129,34 @@ export class TableContextProvider extends Component {
     this.setState({ running: false });
   };
 
+  verticalGeneratedMaze = () => {
+    this.returnToUnvisited();
+    let wallsToBeBuild = [];
+
+    // debugger;
+    for (let i = 1; i < this.state.cols; i += 2) {
+      const skip = Math.floor(Math.random() * this.state.rows);
+      for (let j = 0; j < this.state.rows; j++) {
+        let current = `${j}-${i}`;
+        if (current !== this.state.starting || current !== this.state.ending) {
+          if (j !== skip) {
+            wallsToBeBuild.push(current);
+          }
+        }
+      }
+    }
+
+    for (let i = 0; i < wallsToBeBuild.length; i++) {
+      let k = i;
+      setTimeout(() => {
+        let cell = document.getElementById(wallsToBeBuild[k]);
+        cell.className = "wall";
+      }, 20 * k);
+    }
+    this.setState({
+      running: false
+    });
+  };
   randomlyGeneratedMaze = () => {
     this.returnToUnvisited();
     let wallsToBeBuild = [];
@@ -235,6 +268,7 @@ export class TableContextProvider extends Component {
   linearSearch = () => {
     let current = this.state.current.split("-");
     let path = {};
+    path[this.state.starting] = true;
     const linearHelper = () => {
       let cR = Number(current[0]);
       let cC = Number(current[1]);
@@ -324,6 +358,14 @@ export class TableContextProvider extends Component {
               ) {
                 current = downNext.split("-");
                 path[downNext] = true;
+                return linearHelper();
+              } else if (
+                leftCell &&
+                leftCell.className === "unvisited" &&
+                !path[leftNext]
+              ) {
+                current = leftNext.split("-");
+                path[leftNext] = true;
                 return linearHelper();
               } else if (
                 rightCell &&
@@ -465,7 +507,7 @@ export class TableContextProvider extends Component {
     let ending = this.state.ending.split("-");
     let eR = ending[0];
     let eC = ending[1];
-
+    path[this.state.starting] = true;
     const knownHelper = () => {
       let cR = Number(current[0]);
       let cC = Number(current[1]);
@@ -510,31 +552,48 @@ export class TableContextProvider extends Component {
             return knownHelper();
           } else {
             const potentialPaths = Object.keys(path);
-            if (!potentialPaths.length || potentialPaths.length < 5) {
-              if (upCell && upCell.className === "unvisited" && !path[upNext]) {
-                current = upNext.split("-");
-                path[upNext] = true;
-                return knownHelper();
-              } else if (
-                downCell &&
-                downCell.className === "unvisited" &&
-                !path[downNext]
+            // if (!potentialPaths.length || potentialPaths.length < 5) {
+            //   if (upCell && upCell.className === "unvisited" && !path[upNext]) {
+            //     current = upNext.split("-");
+            //     path[upNext] = true;
+            //     return knownHelper();
+            //   } else if (
+            //     downCell &&
+            //     downCell.className === "unvisited" &&
+            //     !path[downNext]
+            //   ) {
+            //     current = downNext.split("-");
+            //     path[downNext] = true;
+            //     return knownHelper();
+            //   } else if (
+            //     leftCell &&
+            //     leftCell.className === "unvisited" &&
+            //     !path[leftNext]
+            //   ) {
+            //     current = leftNext.split("-");
+            //     path[leftNext] = true;
+            //     return knownHelper();
+            //   }
+            // }
+            // debugger;
+            for (let i = potentialPaths.length - 1; i >= 0; i--) {
+              current = potentialPaths[i].split("-");
+              cR = Number(current[0]);
+              cC = Number(current[1]);
+              rightNext = `${cR}-${cC + 1}`;
+              rightCell = document.getElementById(rightNext);
+              if (
+                rightCell &&
+                rightCell.className === "unvisited" &&
+                !path[rightNext]
               ) {
-                current = downNext.split("-");
-                path[downNext] = true;
-                return knownHelper();
-              } else if (
-                leftCell &&
-                leftCell.className === "unvisited" &&
-                !path[leftNext]
-              ) {
-                current = leftNext.split("-");
-                path[leftNext] = true;
+                current = rightNext.split("-");
+                path[rightNext] = true;
                 return knownHelper();
               }
             }
 
-            for (let i = potentialPaths.length - 1; i > 0; i--) {
+            for (let i = potentialPaths.length - 1; i >= 0; i--) {
               current = potentialPaths[i].split("-");
               cR = Number(current[0]);
               cC = Number(current[1]);
@@ -569,7 +628,7 @@ export class TableContextProvider extends Component {
               }
             }
 
-            for (let i = potentialPaths.length - 1; i > 0; i--) {
+            for (let i = potentialPaths.length - 1; i >= 0; i--) {
               current = potentialPaths[i].split("-");
               cR = Number(current[0]);
               cC = Number(current[1]);
@@ -597,7 +656,7 @@ export class TableContextProvider extends Component {
             return knownHelper();
           } else {
             const potentialPaths = Object.keys(path);
-            for (let i = potentialPaths.length - 1; i > 0; i--) {
+            for (let i = potentialPaths.length - 1; i >= 0; i--) {
               current = potentialPaths[i].split("-");
               cR = Number(current[0]);
               cC = Number(current[1]);
@@ -632,7 +691,7 @@ export class TableContextProvider extends Component {
               }
             }
 
-            for (let i = potentialPaths.length - 1; i > 0; i--) {
+            for (let i = potentialPaths.length - 1; i >= 0; i--) {
               current = potentialPaths[i].split("-");
               cR = Number(current[0]);
               cC = Number(current[1]);
@@ -658,7 +717,7 @@ export class TableContextProvider extends Component {
           } else {
             const potentialPaths = Object.keys(path);
 
-            for (let i = potentialPaths.length - 1; i > 0; i--) {
+            for (let i = potentialPaths.length - 1; i >= 0; i--) {
               current = potentialPaths[i].split("-");
               cR = Number(current[0]);
               cC = Number(current[1]);
@@ -671,7 +730,7 @@ export class TableContextProvider extends Component {
               }
             }
 
-            for (let i = potentialPaths.length - 1; i > 0; i--) {
+            for (let i = potentialPaths.length - 1; i >= 0; i--) {
               current = potentialPaths[i].split("-");
               cR = Number(current[0]);
               cC = Number(current[1]);
@@ -700,7 +759,7 @@ export class TableContextProvider extends Component {
                 return knownHelper();
               }
             }
-            for (let i = potentialPaths.length - 1; i > 0; i--) {
+            for (let i = potentialPaths.length - 1; i >= 0; i--) {
               current = potentialPaths[i].split("-");
               cR = Number(current[0]);
               cC = Number(current[1]);
@@ -728,7 +787,7 @@ export class TableContextProvider extends Component {
             return knownHelper();
           } else {
             const potentialPaths = Object.keys(path);
-            for (let i = potentialPaths.length - 1; i > 0; i--) {
+            for (let i = potentialPaths.length - 1; i >= 0; i--) {
               current = potentialPaths[i].split("-");
               cR = Number(current[0]);
               cC = Number(current[1]);
@@ -745,7 +804,7 @@ export class TableContextProvider extends Component {
               }
             }
 
-            for (let i = potentialPaths.length - 1; i > 0; i--) {
+            for (let i = potentialPaths.length - 1; i >= 0; i--) {
               current = potentialPaths[i].split("-");
               cR = Number(current[0]);
               cC = Number(current[1]);
@@ -771,7 +830,7 @@ export class TableContextProvider extends Component {
                 return knownHelper();
               }
             }
-            for (let i = potentialPaths.length - 1; i > 0; i--) {
+            for (let i = potentialPaths.length - 1; i >= 0; i--) {
               current = potentialPaths[i].split("-");
               cR = Number(current[0]);
               cC = Number(current[1]);
@@ -826,6 +885,7 @@ export class TableContextProvider extends Component {
           wallBuilding: this.wallBuilding,
           buildMaze: this.buildMaze,
           randomlyGeneratedMaze: this.randomlyGeneratedMaze,
+          verticalGeneratedMaze: this.verticalGeneratedMaze,
           selectAlgorithm: this.selectAlgorithm,
           go: this.go
         }}

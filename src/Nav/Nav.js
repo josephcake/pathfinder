@@ -21,14 +21,34 @@ class Nav extends React.Component {
                   className={"nav__select"}
                   onChange={e => checkRunningFunc(selectAlgorithm, e)}
                 >
-                  <option value={"algorithm"}>- Select An Algorithm -</option>
+                  <option className={"nav__select_option"} value={"algorithm"}>
+                    - Select An Algorithm -
+                  </option>
 
-                  <option value={"knownEndPointSearch"}>Known Direction</option>
-                  <option value={"linearSearch"}>Linear Search</option>
-                  <option value={"breadthFirstSearch"}>
+                  <option
+                    className={"nav__select_option"}
+                    value={"knownEndPointSearch"}
+                  >
+                    Known Direction
+                  </option>
+                  <option
+                    className={"nav__select_option"}
+                    value={"linearSearch"}
+                  >
+                    Linear Search
+                  </option>
+                  <option
+                    className={"nav__select_option"}
+                    value={"breadthFirstSearch"}
+                  >
                     Breadth First Search
                   </option>
-                  <option value={"depthFirstSearch"}>Depth First Search</option>
+                  <option
+                    className={"nav__select_option"}
+                    value={"depthFirstSearch"}
+                  >
+                    Depth First Search
+                  </option>
                 </select>
               </div>
               <div className={"nav__wall nav__items"}>
@@ -47,12 +67,27 @@ class Nav extends React.Component {
                   className={"nav__select"}
                   onChange={e => checkRunningFunc(buildMaze, e)}
                 >
-                  <option value={"maze"}>- Build A Maze -</option>
-                  <option value={"basic"}>Basic</option>
-                  <option value={"spiral"}>Spiral</option>
-                  <option value={"target"}>Target</option>
-                  <option value={"stair"}>Stair</option>
-                  <option value={"random"}>Random</option>
+                  <option className={"nav__select_option"} value={"maze"}>
+                    - Build A Maze -
+                  </option>
+                  <option className={"nav__select_option"} value={"basic"}>
+                    Basic
+                  </option>
+                  <option className={"nav__select_option"} value={"spiral"}>
+                    Spiral
+                  </option>
+                  <option className={"nav__select_option"} value={"target"}>
+                    Target
+                  </option>
+                  <option className={"nav__select_option"} value={"stair"}>
+                    Stair
+                  </option>
+                  <option className={"nav__select_option"} value={"vertical"}>
+                    Vertical
+                  </option>
+                  <option className={"nav__select_option"} value={"random"}>
+                    Random
+                  </option>
                 </select>
               </div>
 

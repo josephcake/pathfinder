@@ -7,6 +7,7 @@
   justify-content: space-around;
   align-items: space-between;
   background-color: darkslateblue;
+  font-family: "Bree Serif";
   &__items {
     display: flex;
     flex-direction: row;
@@ -26,7 +27,14 @@
       width: 80px;
       font-size: 2rem;
       padding: 0 10px;
-      color: mediumspringgreen;
+      //   color: mediumspringgreen;
+      //   border-radius: 0;
+      border: 1px solid mediumspringgreen;
+
+      &:hover {
+        text-decoration: underline;
+        text-decoration-color: mediumaquamarine;
+      }
     }
   }
   &__select {
@@ -35,6 +43,16 @@
     color: white;
     font-weight: 800;
     text-align-last: center;
+    outline: none;
+    font-size: 1.3rem;
+    cursor: pointer;
+
+    &_option {
+      background: rgb(25, 17, 65);
+      font-size: 1.3rem;
+      font-weight: 800;
+      cursor: pointer;
+    }
   }
   &__wall_self {
     display: flex;
