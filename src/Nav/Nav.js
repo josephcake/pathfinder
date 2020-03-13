@@ -82,8 +82,23 @@ class Nav extends React.Component {
                   <option className={"nav__select_option"} value={"stair"}>
                     Stair
                   </option>
+                  <option className={"nav__select_option"} value={"horizontal"}>
+                    Horizontal Wide
+                  </option>
                   <option className={"nav__select_option"} value={"vertical"}>
-                    Vertical
+                    Vertical Wide
+                  </option>
+                  <option
+                    className={"nav__select_option"}
+                    value={"horizontalNarrow"}
+                  >
+                    Horizontal Narrow
+                  </option>
+                  <option
+                    className={"nav__select_option"}
+                    value={"verticalNarrow"}
+                  >
+                    Vertical Narrow
                   </option>
                   <option className={"nav__select_option"} value={"random"}>
                     Random

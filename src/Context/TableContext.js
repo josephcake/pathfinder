@@ -103,7 +103,7 @@ export class TableContextProvider extends Component {
   buildMaze = e => {
     this.returnToUnvisited();
 
-    const name = e.target.value.toLowerCase();
+    const name = e.target.value;
     if (name === "maze") {
       this.setState({ running: false });
       return;
@@ -112,7 +112,33 @@ export class TableContextProvider extends Component {
     if (name === "random") {
       this.randomlyGeneratedMaze();
     } else if (name === "vertical") {
-      this.verticalGeneratedMaze();
+      this.directionalGeneratedMaze(
+        this.state.cols,
+
+        this.state.rows,
+        "vertical",
+        true
+      );
+    } else if (name === "horizontal") {
+      this.directionalGeneratedMaze(
+        this.state.rows,
+        this.state.cols,
+        "horizontal",
+        true
+      );
+      // this.horizontalGeneratedMaze();
+    } else if (name === "verticalNarrow") {
+      this.directionalGeneratedMaze(
+        this.state.cols,
+        this.state.rows,
+        "vertical"
+      );
+    } else if (name === "horizontalNarrow") {
+      this.directionalGeneratedMaze(
+        this.state.rows,
+        this.state.cols,
+        "horizontal"
+      );
     } else {
       const mazes = [BASIC_WALL, SPIRAL_WALL, STAIR_WALL, TARGET_WALL];
       const idx = mazeType.indexOf(name);
@@ -129,34 +155,116 @@ export class TableContextProvider extends Component {
     this.setState({ running: false });
   };
 
-  verticalGeneratedMaze = () => {
+  directionalGeneratedMaze = (outerNum, innerNum, direction, wide) => {
     this.returnToUnvisited();
     let wallsToBeBuild = [];
-
-    // debugger;
-    for (let i = 1; i < this.state.cols; i += 2) {
-      const skip = Math.floor(Math.random() * this.state.rows);
-      for (let j = 0; j < this.state.rows; j++) {
-        let current = `${j}-${i}`;
-        if (current !== this.state.starting || current !== this.state.ending) {
+    let spaces = wide ? 6 : 2;
+    for (let i = 1; i < outerNum; i += spaces) {
+      const skip = Math.floor(Math.random() * innerNum);
+      for (let j = 0; j < innerNum; j++) {
+        let current = direction === "horizontal" ? `${i}-${j}` : `${j}-${i}`;
+        if (current !== this.state.starting && current !== this.state.ending) {
           if (j !== skip) {
             wallsToBeBuild.push(current);
           }
         }
       }
     }
-
-    for (let i = 0; i < wallsToBeBuild.length; i++) {
-      let k = i;
-      setTimeout(() => {
-        let cell = document.getElementById(wallsToBeBuild[k]);
-        cell.className = "wall";
-      }, 20 * k);
+    if (wide && direction === "horizontal") {
+      this.horizontalExtension(wallsToBeBuild);
+    } else if (wide && direction === "vertical") {
+      this.verticalExtension(wallsToBeBuild);
+    } else {
+      for (let i = 0; i < wallsToBeBuild.length; i++) {
+        let k = i;
+        setTimeout(() => {
+          let cell = document.getElementById(wallsToBeBuild[k]);
+          cell.className = "wall";
+        }, 20 * k);
+      }
     }
+
     this.setState({
       running: false
     });
   };
+  horizontalExtension = wallsToBeBuild => {
+    for (let i = 0; i < wallsToBeBuild.length; i++) {
+      let k = i;
+      let extra = Math.ceil(Math.random() * 2);
+      let upOrDown = Math.floor(Math.random() * 10) > 5 ? true : false;
+      setTimeout(() => {
+        let current = wallsToBeBuild[k].split("-");
+        let cR = Number(current[0]);
+        let cC = Number(current[1]);
+        let cell = document.getElementById(wallsToBeBuild[k]);
+        for (let i = 0; i < extra; i++) {
+          if (upOrDown) {
+            let tempCell = document.getElementById(`${cR - 1}-${cC}`);
+            if (
+              tempCell &&
+              tempCell.className !== "starting" &&
+              tempCell.className !== "ending"
+            ) {
+              tempCell.className = "wall";
+              cR--;
+            }
+          } else {
+            let tempCell = document.getElementById(`${cR + 1}-${cC}`);
+            if (
+              tempCell &&
+              tempCell.className !== "starting" &&
+              tempCell.className !== "ending"
+            ) {
+              tempCell.className = "wall";
+              cR++;
+            }
+          }
+        }
+
+        cell.className = "wall";
+      }, 20 * k);
+    }
+  };
+  verticalExtension = wallsToBeBuild => {
+    for (let i = 0; i < wallsToBeBuild.length; i++) {
+      let k = i;
+      let extra = Math.ceil(Math.random() * 2);
+      let leftOrRight = Math.floor(Math.random() * 10) > 5 ? true : false;
+      setTimeout(() => {
+        let current = wallsToBeBuild[k].split("-");
+        let cR = Number(current[0]);
+        let cC = Number(current[1]);
+        let cell = document.getElementById(wallsToBeBuild[k]);
+        for (let i = 0; i < extra; i++) {
+          if (leftOrRight) {
+            let tempCell = document.getElementById(`${cR}-${cC - 1}`);
+            if (
+              tempCell &&
+              tempCell.className !== "starting" &&
+              tempCell.className !== "ending"
+            ) {
+              tempCell.className = "wall";
+              cC--;
+            }
+          } else {
+            let tempCell = document.getElementById(`${cR}-${cC + 1}`);
+            if (
+              tempCell &&
+              tempCell.className !== "starting" &&
+              tempCell.className !== "ending"
+            ) {
+              tempCell.className = "wall";
+              cC++;
+            }
+          }
+        }
+
+        cell.className = "wall";
+      }, 20 * k);
+    }
+  };
+
   randomlyGeneratedMaze = () => {
     this.returnToUnvisited();
     let wallsToBeBuild = [];
@@ -885,7 +993,6 @@ export class TableContextProvider extends Component {
           wallBuilding: this.wallBuilding,
           buildMaze: this.buildMaze,
           randomlyGeneratedMaze: this.randomlyGeneratedMaze,
-          verticalGeneratedMaze: this.verticalGeneratedMaze,
           selectAlgorithm: this.selectAlgorithm,
           go: this.go
         }}
