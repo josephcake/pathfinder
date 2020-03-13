@@ -49,6 +49,12 @@ class Nav extends React.Component {
                   >
                     Depth First Search
                   </option>
+                  <option
+                    className={"nav__select_option"}
+                    value={"randomSearch"}
+                  >
+                    Random Search
+                  </option>
                 </select>
               </div>
               <div className={"nav__wall nav__items"}>
