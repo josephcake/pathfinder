@@ -3,9 +3,9 @@ import Table from "../Table/Table";
 import { TableContext } from "../Context/TableContext";
 
 class Main extends React.Component {
-  // shouldComponentUpdate() {
-  //   return false;
-  // }
+  shouldComponentUpdate() {
+    return false;
+  }
   render() {
     return (
       <TableContext.Consumer>

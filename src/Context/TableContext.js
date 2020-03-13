@@ -14,6 +14,8 @@ export class TableContextProvider extends Component {
     ending: "15-42",
     rows: 30,
     cols: 60,
+    maze: "Maze",
+    algorithm: "none",
     current: "15-12",
     running: false,
     refresh: false,
@@ -37,26 +39,29 @@ export class TableContextProvider extends Component {
   shouldComponentUpdate(nextProps, nextState) {
     if (
       nextState.ending !== this.state.ending ||
-      this.state.wallOn !== nextState.wallOn
+      this.state.wallOn !== nextState.wallOn ||
+      this.state.maze !== nextState.maze
     ) {
       return true;
     }
     return false;
   }
 
-  toggleWall = async () => {
-    await this.setState({
-      wallOn: !this.state.wallOn
-    });
-    console.log(this.state.wallOn);
-
-    if (this.state.wallOn) {
-      let main = document.getElementById("main");
-      main.style.cursor = "pointer";
-    } else {
-      let main = document.getElementById("main");
-      main.style.cursor = "auto";
-    }
+  toggleWall = () => {
+    this.setState(
+      {
+        wallOn: !this.state.wallOn,
+        running: false
+      },
+      () => {
+        let main = document.getElementById("main");
+        if (this.state.wallOn === true) {
+          main.style.cursor = "pointer";
+        } else {
+          main.style.cursor = "auto";
+        }
+      }
+    );
   };
 
   wallConstructorOn = () => {
@@ -73,21 +78,18 @@ export class TableContextProvider extends Component {
   wallConstructorOff = () => {
     // debugger;
     if (this.state.wallOn) {
-      this.setState({ running: false, building: false }, () =>
-        console.log(this.state.building)
-      );
+      this.setState({ running: false, building: false });
     }
   };
 
   wallBuilding = e => {
     if (this.state.building) {
-      console.log(e.target.id);
+      // console.log(e.target.id);
       let id = e.target.id;
       if (
         String(id) === this.state.starting ||
         String(id) === this.state.ending
       ) {
-        console.log("starting/ending");
       } else {
         let cell = document.getElementById(id);
         if (cell.id !== "15-59") cell.className = "wall";
@@ -97,18 +99,55 @@ export class TableContextProvider extends Component {
 
   buildMaze = e => {
     this.returnToUnvisited();
-    const name = e.target.name;
+    const name = e.target.value.toLowerCase();
     const mazeType = ["basic", "spiral", "stair", "target"];
-    const mazes = [BASIC_WALL, SPIRAL_WALL, STAIR_WALL, TARGET_WALL];
-    const idx = mazeType.indexOf(name);
-    for (let i = 0; i < mazes[idx].length; i++) {
-      let k = i;
-      let cell = document.getElementById(mazes[idx][k]);
-      setTimeout(function() {
-        cell.className = "wall";
-      }, 10 * k);
+    if (name === "random") {
+      this.randomlyGeneratedMaze();
+    } else {
+      const mazes = [BASIC_WALL, SPIRAL_WALL, STAIR_WALL, TARGET_WALL];
+      const idx = mazeType.indexOf(name);
+      for (let i = 0; i < mazes[idx].length; i++) {
+        let k = i;
+        let cell = document.getElementById(mazes[idx][k]);
+        setTimeout(function() {
+          cell.className = "wall";
+        }, 10 * k);
+      }
     }
+
     this.setState({ running: false });
+  };
+
+  randomlyGeneratedMaze = () => {
+    this.returnToUnvisited();
+    let wallsToBeBuild = [];
+
+    const unvisited = document.getElementsByClassName("unvisited");
+    const unvisitedArr = Array.from(unvisited);
+    // debugger;
+    for (let i = 0; i < unvisitedArr.length; i++) {
+      const skip = Math.floor(Math.random() * 9);
+      const walls = Math.floor(Math.random() * 4);
+      if (i + walls < unvisitedArr.length) {
+        for (let j = 0; j < walls; j++) {
+          let cell = unvisitedArr[i + j];
+          wallsToBeBuild.push(cell.id);
+        }
+      }
+
+      i += skip;
+    }
+
+    for (let i = 0; i < wallsToBeBuild.length; i++) {
+      let k = i;
+      setTimeout(() => {
+        let cell = document.getElementById(wallsToBeBuild[k]);
+        cell.className = "wall";
+      }, 20 * k);
+    }
+    this.setState({
+      running: false
+    });
   };
 
   clearBoard = e => {
@@ -145,19 +184,6 @@ export class TableContextProvider extends Component {
         arrVisited[k].className = "unvisited";
       }
     }
-
-    // for (let i = 0; i < arrWalls.length; i++) {
-    //   let k = i;
-    //   setTimeout(function() {
-    //     arrWalls[k].className = "unvisited";
-    //   }, 2 * k);
-    // }
-    // for (let i = 0; i < arrVisited.length; i++) {
-    //   let k = i;
-    //   setTimeout(function() {
-    //     arrVisited[k].className = "unvisited";
-    //   }, 2 * k);
-    // }
   };
 
   checkRunningFunc = (func, e) => {
@@ -169,13 +195,35 @@ export class TableContextProvider extends Component {
       func(e);
     }
   };
+
+  selectAlgorithm = e => {
+    this.returnToUnvisited();
+
+    let name = e.target.value;
+    let algorithmNames = [
+      "knownEndPointSearch",
+      "linearSearch",
+      "breadthFirstSearch",
+      "depthFirstSearch"
+    ];
+    let algorithms = [
+      this.knownEndPointSearch,
+      this.linearSearch,
+      this.breadthFirstSearch,
+      this.depthFirstSearch
+    ];
+    const selected = algorithmNames.indexOf(name);
+    algorithms[selected]();
+    // debugger;
+  };
+
   linearSearch = () => {
     let current = this.state.current.split("-");
     let path = {};
     const linearHelper = () => {
       let cR = Number(current[0]);
       let cC = Number(current[1]);
-      console.log(`${cR}-${cC}`);
+      // console.log(`${cR}-${cC}`);
       // debugger;
       if (`${cR}-${cC}` === this.state.ending) {
         return;
@@ -288,7 +336,7 @@ export class TableContextProvider extends Component {
       let current = queue[counter].split("-");
       let cR = Number(current[0]);
       let cC = Number(current[1]);
-      console.log(queue[counter]);
+      // console.log(queue[counter]);
       this.breadthHelper(cR, cC, path, queue);
       counter++;
       if (queue[counter] === this.state.ending) {
@@ -312,49 +360,6 @@ export class TableContextProvider extends Component {
       }
     }
   };
-  // depthHelper = (cR, cC, path, queue) => {
-  //   let current = `${cR}-${cC}`;
-  //   let upNext = `${cR - 1}-${cC}`;
-  //   let downNext = `${cR + 1}-${cC}`;
-  //   let leftNext = `${cR}-${cC - 1}`;
-  //   let rightNext = `${cR}-${cC + 1}`;
-  //   console.log(current);
-  //   if (current === this.state.ending) {
-  //     return;
-  //   }
-  //   if (!path[leftNext] && !path[rightNext] && cR !== 0 && !path[upNext]) {
-  //     queue.push(upNext);
-  //     path[upNext] = true;
-  //   } else if (cR === 1 && path[rightNext] && path[downNext]) {
-  //     queue.push(leftNext);
-  //     path[leftNext] = true;
-  //   } else if (cR !== 0 && path[upNext] && cR !== this.state.rows - 1) {
-  //     queue.push(downNext);
-  //     path[downNext] = true;
-  //   } else if (cR !== 0 && path[rightNext] && path[downNext]) {
-  //     queue.push(upNext);
-  //     path[upNext] = true;
-  //   } else if (!path[rightNext] && cR === 0 && cC !== this.state.cols - 1) {
-  //     queue.push(rightNext);
-  //     path[rightNext] = true;
-  //   } else if (
-  //     !path[rightNext] &&
-  //     cR === 0 &&
-  //     cC === this.state.cols - 1 &&
-  //     cR !== this.state.rows - 1
-  //   ) {
-  //     queue.push(downNext);
-  //     path[downNext] = true;
-  //   } else if (cR === this.state.rows - 1) {
-  //     if (path[upNext]) {
-  //       queue.push(leftNext);
-  //       path[leftNext] = true;
-  //     } else {
-  //       queue.push(upNext);
-  //       path[upNext] = true;
-  //     }
-  //   }
-  // };
 
   breadthFirstSearch = () => {
     let queue = [this.state.current];
@@ -387,7 +392,7 @@ export class TableContextProvider extends Component {
       }
     }
 
-    console.log(queue);
+    // console.log(queue);
   };
   breadthHelper = (cR, cC, path, queue) => {
     let upNext = `${cR - 1}-${cC}`;
@@ -442,7 +447,7 @@ export class TableContextProvider extends Component {
     const knownHelper = () => {
       let cR = Number(current[0]);
       let cC = Number(current[1]);
-      console.log(`${cR}-${cC}`);
+      // console.log(`${cR}-${cC}`);
       // debugger;
       if (`${cR}-${cC}` === this.state.ending) {
         return;
@@ -482,7 +487,7 @@ export class TableContextProvider extends Component {
             return knownHelper();
           } else {
             const potentialPaths = Object.keys(path);
-            if (!potentialPaths.length || potentialPaths.length === 1) {
+            if (!potentialPaths.length || potentialPaths.length < 5) {
               if (upCell && upCell.className === "unvisited" && !path[upNext]) {
                 current = upNext.split("-");
                 path[upNext] = true;
@@ -846,7 +851,9 @@ export class TableContextProvider extends Component {
           wallConstructorOff: this.wallConstructorOff,
           wallBuilding: this.wallBuilding,
           buildMaze: this.buildMaze,
-          linearSearch: this.linearSearch
+          linearSearch: this.linearSearch,
+          randomlyGeneratedMaze: this.randomlyGeneratedMaze,
+          selectAlgorithm: this.selectAlgorithm
         }}
       >
         {this.props.children}
