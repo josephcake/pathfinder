@@ -29,11 +29,12 @@
       padding: 0 10px;
       //   color: mediumspringgreen;
       //   border-radius: 0;
-      border: 1px solid mediumspringgreen;
+      background-color: rgb(24, 177, 118);
+      //   border: 1px solid mediumspringgreen;
+      border: 1px solid white;
 
       &:hover {
-        text-decoration: underline;
-        text-decoration-color: mediumaquamarine;
+        background-color: rgb(0, 255, 170);
       }
     }
   }
@@ -45,6 +46,7 @@
     text-align-last: center;
     outline: none;
     font-size: 1.3rem;
+    padding: 0 10px;
     cursor: pointer;
 
     &_option {
@@ -109,11 +111,11 @@ h5 {
 }
 
 input:checked + .slider {
-  background-color: #2196f3;
+  background-color: mediumaquamarine;
 }
 
 input:focus + .slider {
-  box-shadow: 0 0 1px #2196f3;
+  box-shadow: 0 0 1px mediumaquamarine;
 }
 
 input:checked + .slider:before {

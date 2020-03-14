@@ -19,10 +19,10 @@ class Nav extends React.Component {
               <div className={"nav__algo nav__items"}>
                 <select
                   className={"nav__select"}
-                  onChange={e => checkRunningFunc(selectAlgorithm, e)}
+                  onChange={e => selectAlgorithm(e)}
                 >
                   <option className={"nav__select_option"} value={"algorithm"}>
-                    - Select An Algorithm -
+                    Select An Algorithm
                   </option>
 
                   <option
@@ -51,6 +51,12 @@ class Nav extends React.Component {
                   </option>
                   <option
                     className={"nav__select_option"}
+                    value={"bidirectionalSearch"}
+                  >
+                    Bidirectional Search
+                  </option>
+                  <option
+                    className={"nav__select_option"}
                     value={"randomSearch"}
                   >
                     Random Search
@@ -74,7 +80,7 @@ class Nav extends React.Component {
                   onChange={e => checkRunningFunc(buildMaze, e)}
                 >
                   <option className={"nav__select_option"} value={"maze"}>
-                    - Build A Maze -
+                    Build A Maze
                   </option>
                   <option className={"nav__select_option"} value={"basic"}>
                     Basic

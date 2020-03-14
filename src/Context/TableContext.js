@@ -13,7 +13,6 @@ export class TableContextProvider extends Component {
     ending: "15-42",
     rows: 30,
     cols: 60,
-
     algorithm: "algorithm",
     current: "15-12",
     running: false,
@@ -353,6 +352,7 @@ export class TableContextProvider extends Component {
       "linearSearch",
       "breadthFirstSearch",
       "depthFirstSearch",
+      "bidirectionalSearch",
       "randomSearch"
     ];
     const algorithms = [
@@ -360,12 +360,83 @@ export class TableContextProvider extends Component {
       this.linearSearch,
       this.breadthFirstSearch,
       this.depthFirstSearch,
+      this.bidirectionalSearch,
       this.randomSearch
     ];
     const selected = algorithmNames.indexOf(name);
     // console.log(selected);
 
     algorithms[selected]();
+  };
+
+  bidirectionalSearch = () => {
+    let startingQueue = [this.state.current];
+    let endingQueue = [this.state.ending];
+    let startingPath = {};
+    let endingPath = {};
+    let counter = 0;
+    while (
+      !startingPath[endingQueue[counter]] &&
+      !endingPath[startingQueue[counter]]
+    ) {
+      if (
+        startingQueue[counter] === "crossed" ||
+        endingQueue[counter] === "crossed"
+      ) {
+        break;
+      }
+      try {
+        let current = startingQueue[counter].split("-");
+        let current2 = endingQueue[counter].split("-");
+        let cR = Number(current[0]);
+        let cC = Number(current[1]);
+        let cR2 = Number(current2[0]);
+        let cC2 = Number(current2[1]);
+        this.spreadHelper(cR, cC, startingPath, startingQueue, endingPath);
+        this.spreadHelper(cR2, cC2, endingPath, endingQueue, startingPath);
+        counter++;
+      } catch (err) {
+        console.log(err);
+        break;
+      }
+    }
+
+    let max = Math.max(startingQueue.length, endingQueue.length);
+    for (let i = 1; i < max; i++) {
+      //don't color the starting
+      let k = i;
+      if (
+        startingQueue[k] &&
+        startingQueue[k] !== this.state.ending &&
+        startingQueue[k] !== this.state.starting
+      ) {
+        setTimeout(function() {
+          let cell = document.getElementById(startingQueue[k]);
+          if (cell) {
+            cell.className = "visited";
+          }
+        }, 10 * k);
+      }
+      if (
+        endingQueue[k] &&
+        endingQueue[k] !== this.state.ending &&
+        endingQueue[k] !== this.state.ending
+      ) {
+        setTimeout(function() {
+          let cell = document.getElementById(endingQueue[k]);
+          if (cell) {
+            cell.className = "visited";
+          }
+        }, 10 * k);
+      }
+      // if (queue[k] === this.state.ending) {
+      //   setTimeout(function() {
+      //     let cell = document.getElementById(queue[k]);
+      //     cell.className = "ending-acquired";
+      //   }, 10 * k);
+      // }
+    }
+    this.setState({ running: false });
   };
 
   randomSearch = () => {
@@ -478,7 +549,7 @@ export class TableContextProvider extends Component {
       }, 15);
     };
     randomHelper();
-    this.setState({ running: false });
+    // this.setState({ running: false });
   };
 
   linearSearch = () => {
@@ -490,9 +561,7 @@ export class TableContextProvider extends Component {
       let cC = Number(current[1]);
       // console.log(`${cR}-${cC}`);
       // debugger;
-      if (`${cR}-${cC}` === this.state.ending) {
-        return;
-      }
+
       let upNext = `${cR - 1}-${cC}`;
       let downNext = `${cR + 1}-${cC}`;
       let leftNext = `${cR}-${cC - 1}`;
@@ -508,12 +577,20 @@ export class TableContextProvider extends Component {
           currentCell.className = "visited";
         }
 
-        if (
-          (leftCell && leftCell.className === "ending") ||
-          (rightCell && rightCell.className === "ending") ||
-          (upCell && upCell.className === "ending") ||
-          (downCell && downCell.className === "ending")
-        ) {
+        if (leftCell && leftCell.className === "ending") {
+          leftCell.className = "ending-acquired";
+          return;
+        }
+        if (rightCell && rightCell.className === "ending") {
+          rightCell.className = "ending-acquired";
+          return;
+        }
+        if (downCell && downCell.className === "ending") {
+          downCell.className = "ending-acquired";
+          return;
+        }
+        if (upCell && upCell.className === "ending") {
+          upCell.className = "ending-acquired";
           return;
         }
         if (leftCell && leftCell.className === "unvisited" && !path[leftNext]) {
@@ -600,7 +677,6 @@ export class TableContextProvider extends Component {
       }, 15);
     };
     linearHelper();
-    this.setState({ running: false });
   };
 
   depthFirstSearch = () => {
@@ -612,7 +688,7 @@ export class TableContextProvider extends Component {
         let current = queue[counter].split("-");
         let cR = Number(current[0]);
         let cC = Number(current[1]);
-        this.breadthHelper(cR, cC, path, queue);
+        this.spreadHelper(cR, cC, path, queue);
         counter++;
         if (queue[counter] === this.state.ending) {
           break;
@@ -649,7 +725,7 @@ export class TableContextProvider extends Component {
         let current = queue[counter].split("-");
         let cR = Number(current[0]);
         let cC = Number(current[1]);
-        this.breadthHelper(cR, cC, path, queue);
+        this.spreadHelper(cR, cC, path, queue);
         counter++;
         if (queue[counter] === this.state.ending) {
           break;
@@ -676,7 +752,7 @@ export class TableContextProvider extends Component {
       }
     }
   };
-  breadthHelper = (cR, cC, path, queue) => {
+  spreadHelper = (cR, cC, path, queue, bidirectionalPath) => {
     let upNext = `${cR - 1}-${cC}`;
     let downNext = `${cR + 1}-${cC}`;
     let leftNext = `${cR}-${cC - 1}`;
@@ -685,6 +761,14 @@ export class TableContextProvider extends Component {
     let downCell = document.getElementById(downNext);
     let leftCell = document.getElementById(leftNext);
     let rightCell = document.getElementById(rightNext);
+    if (bidirectionalPath) {
+      let current = `${cR}-${cC}`;
+      if (bidirectionalPath[current]) {
+        queue.push("crossed");
+        path["crossed"] = "crossed";
+        return;
+      }
+    }
     if (rightCell) {
       if (!path[rightNext]) {
         path[rightNext] = true;
