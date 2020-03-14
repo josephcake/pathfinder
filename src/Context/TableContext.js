@@ -5,12 +5,13 @@ import { BASIC_WALL } from "../Wall/BasicWall";
 import { SPIRAL_WALL } from "../Wall/SpiralWall";
 import { STAIR_WALL } from "../Wall/StairWall";
 import { TARGET_WALL } from "../Wall/TargetWall";
+import { CHECKER_WALL } from "../Wall/CheckerWall";
 
 export const TableContext = createContext();
 export class TableContextProvider extends Component {
   state = {
     starting: "15-12",
-    ending: "15-42",
+    ending: "15-48",
     rows: 30,
     cols: 60,
     algorithm: "algorithm",
@@ -86,7 +87,8 @@ export class TableContextProvider extends Component {
       ) {
       } else {
         let cell = document.getElementById(id);
-        if (cell.id !== "15-59") cell.className = "wall";
+        // if (cell.id !== "15-59") cell.className = "wall";
+        if (cell.id !== "15-59") cell.className = "unvisited";
       }
     }
   };
@@ -99,7 +101,7 @@ export class TableContextProvider extends Component {
       this.setState({ running: false });
       return;
     }
-    const mazeType = ["basic", "spiral", "stair", "target"];
+    const mazeType = ["basic", "spiral", "stair", "target", "checker"];
     if (name === "random") {
       this.randomlyGeneratedMaze();
     } else if (name === "vertical") {
@@ -131,7 +133,13 @@ export class TableContextProvider extends Component {
         "horizontal"
       );
     } else {
-      const mazes = [BASIC_WALL, SPIRAL_WALL, STAIR_WALL, TARGET_WALL];
+      const mazes = [
+        BASIC_WALL,
+        SPIRAL_WALL,
+        STAIR_WALL,
+        TARGET_WALL,
+        CHECKER_WALL
+      ];
       const idx = mazeType.indexOf(name);
 
       for (let i = 0; i < mazes[idx].length; i++) {
@@ -462,12 +470,20 @@ export class TableContextProvider extends Component {
         if (currentCell.className !== "starting") {
           currentCell.className = "visited";
         }
-        if (
-          (leftCell && leftCell.className === "ending") ||
-          (rightCell && rightCell.className === "ending") ||
-          (upCell && upCell.className === "ending") ||
-          (downCell && downCell.className === "ending")
-        ) {
+        if (leftCell && leftCell.className === "ending") {
+          leftCell.className = "ending-acquired";
+          return;
+        }
+        if (rightCell && rightCell.className === "ending") {
+          rightCell.className = "ending-acquired";
+          return;
+        }
+        if (downCell && downCell.className === "ending") {
+          downCell.className = "ending-acquired";
+          return;
+        }
+        if (upCell && upCell.className === "ending") {
+          upCell.className = "ending-acquired";
           return;
         }
         if (
@@ -833,12 +849,20 @@ export class TableContextProvider extends Component {
           currentCell.className = "visited";
         }
 
-        if (
-          (leftCell && leftCell.className === "ending") ||
-          (rightCell && rightCell.className === "ending") ||
-          (upCell && upCell.className === "ending") ||
-          (downCell && downCell.className === "ending")
-        ) {
+        if (leftCell && leftCell.className === "ending") {
+          leftCell.className = "ending-acquired";
+          return;
+        }
+        if (rightCell && rightCell.className === "ending") {
+          rightCell.className = "ending-acquired";
+          return;
+        }
+        if (downCell && downCell.className === "ending") {
+          downCell.className = "ending-acquired";
+          return;
+        }
+        if (upCell && upCell.className === "ending") {
+          upCell.className = "ending-acquired";
           return;
         }
         if (cC < eC) {
@@ -1150,7 +1174,6 @@ export class TableContextProvider extends Component {
     };
 
     knownHelper();
-    this.setState({ running: false });
   };
 
   changeEndpoint = e => {
