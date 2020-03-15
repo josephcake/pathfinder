@@ -18,25 +18,35 @@ td {
 }
 
 .starting {
-  background-color: darkmagenta;
+  background-color: rgb(151, 125, 151);
+  transform: rotate(90deg);
+  background-image: url("../Images/bullet.png");
+  background-size: contain;
+  background-position: center;
+  border-radius: 10%;
 }
 .ending {
-  /* border: solid 2px darkmagenta; */
-  background-color: mediumaquamarine;
+  // border: solid 4px tomato;
+  // background-color: mediumaquamarine;
+  background-color: rgb(255, 208, 0);
+  background-image: url("../Images/duck.png");
+  background-size: contain;
+  background-position: center;
+  border-radius: 10%;
 }
 .ending-acquired {
   background-color: mediumaquamarine;
 }
 
-.path {
-  background-color: tomato;
-  transition: background 10ms linear;
-}
+// .path {
+//   background-color: tomato;
+//   transition: background 10ms linear;
+// }
 .wall {
   border: none;
   /* background-color: gray; */
   animation-name: wallAnimation;
-  animation-duration: 1.5s;
+  animation-duration: 1s;
   animation-timing-function: ease-out;
   animation-delay: 0s;
   animation-direction: alternate;
@@ -73,18 +83,12 @@ td {
   0% {
     transform: scale(1);
     background-color: rgba(0, 0, 66, 0.75);
-    /* border-radius: 100%; */
   }
   50% {
     transform: scale(0.8);
-    background-color: rgba(70, 70, 70, 0.75);
   }
-  75% {
-    transform: scale(0.5);
-    background-color: rgba(121, 121, 121, 0.75);
-  }
+
   100% {
-    /* transform: scale(1); */
     background-color: rgba(4, 4, 44, 0.8);
   }
 }
@@ -92,7 +96,6 @@ td {
   0% {
     transform: scale(1);
     background-color: rgba(0, 0, 66, 0.75);
-    /* border-radius: 100%; */
   }
   50% {
     transform: scale(0.8);
