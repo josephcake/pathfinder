@@ -22,18 +22,21 @@ class Main extends React.Component {
         }) => {
           return (
             <div id={"main"} className={"main"}>
-              <Table
-                rows={rows}
-                starting={starting}
-                ending={ending}
-                current={current}
-                cols={cols}
-                draggable={false}
-                wallConstructorOn={wallConstructorOn}
-                wallConstructorOff={wallConstructorOff}
-                wallBuilding={wallBuilding}
-              />
-              ;
+              <table>
+                <tbody>
+                  <Table
+                    rows={rows}
+                    starting={starting}
+                    ending={ending}
+                    current={current}
+                    cols={cols}
+                    draggable={false}
+                    wallConstructorOn={wallConstructorOn}
+                    wallConstructorOff={wallConstructorOff}
+                    wallBuilding={wallBuilding}
+                  />
+                </tbody>
+              </table>
             </div>
           );
         }}

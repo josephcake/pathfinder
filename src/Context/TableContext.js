@@ -1,5 +1,5 @@
 import React, { Component, createContext } from "react";
-import * as _ from "underscore";
+// import * as _ from "underscore";
 // import { withRouter } from "react-router"
 import { BASIC_WALL } from "../Wall/BasicWall";
 import { SPIRAL_WALL } from "../Wall/SpiralWall";
@@ -10,17 +10,17 @@ import { CHECKER_WALL } from "../Wall/CheckerWall";
 export const TableContext = createContext();
 export class TableContextProvider extends Component {
   state = {
-    starting: "15-12",
-    ending: "15-48",
-    rows: 30,
-    cols: 60,
+    starting: "17-15",
+    ending: "17-64",
+    rows: 35,
+    cols: 80,
     algorithm: "algorithm",
-    current: "15-12",
+    current: "17-15",
     running: false,
     refresh: false,
-    wallOn: false,
-    building: false,
-    blocked: false
+    // wallOn: false,
+    // building: false,
+    block: ""
   };
   componentDidMount() {
     window.addEventListener("mouseup", this.wallConstructorOff);
@@ -48,34 +48,36 @@ export class TableContextProvider extends Component {
     return false;
   }
 
-  toggleWall = () => {
-    this.setState(
-      {
-        wallOn: !this.state.wallOn,
-        running: false
-      },
-      () => {
-        let main = document.getElementById("main");
-        if (this.state.wallOn === true) {
-          main.style.cursor = "pointer";
-        } else {
-          main.style.cursor = "auto";
-        }
-      }
-    );
-  };
+  // toggleWall = () => {
+  //   this.setState(
+  //     {
+  //       wallOn: !this.state.wallOn,
+  //       running: false
+  //     },
+  //     () => {
+  //       let main = document.getElementById("main");
+  //       if (this.state.wallOn === true) {
+  //         main.style.cursor = "pointer";
+  //       } else {
+  //         main.style.cursor = "auto";
+  //       }
+  //     }
+  //   );
+  // };
 
   wallConstructorOn = () => {
-    if (this.state.wallOn) {
-      this.setState({
-        building: true
-      });
-    }
+    // if (this.state.wallOn) {
+    this.setState({
+      building: true
+    });
+    // }
   };
   wallConstructorOff = () => {
-    if (this.state.wallOn) {
-      this.setState({ running: false, building: false });
-    }
+    // if (this.state.wallOn) {
+    this.setState({
+      building: false
+    });
+    // }
   };
 
   wallBuilding = e => {
@@ -87,8 +89,17 @@ export class TableContextProvider extends Component {
       ) {
       } else {
         let cell = document.getElementById(id);
-        // if (cell.id !== "15-59") cell.className = "wall";
-        if (cell.id !== "15-59") cell.className = "unvisited";
+        if (this.state.block !== id) {
+          if (cell.id !== "17-79") {
+            if (cell.className === "unvisited") {
+              cell.className = "wall";
+            } else if (cell.className === "wall") {
+              cell.className = "unvisited";
+            }
+          }
+          this.setState({ block: id });
+        }
+        // if (cell.id !== "15-59") cell.className = "unvisited";
       }
     }
   };
@@ -334,6 +345,7 @@ export class TableContextProvider extends Component {
 
   checkRunningFunc = (func, e) => {
     // debugger;
+    // console.log(this.state.running);
     if (this.state.running) {
       return;
     } else {
@@ -344,7 +356,8 @@ export class TableContextProvider extends Component {
 
   selectAlgorithm = e => {
     let algorithm = e.target.value;
-    this.setState({ running: false, algorithm });
+    // this.setState({ running: false, algorithm });
+    this.setState({ algorithm });
   };
 
   go = () => {
@@ -423,7 +436,7 @@ export class TableContextProvider extends Component {
           if (cell) {
             cell.className = "visited";
           }
-        }, 10 * k);
+        }, 15 * k);
       }
       if (
         endingQueue[k] &&
@@ -435,7 +448,7 @@ export class TableContextProvider extends Component {
           if (cell) {
             cell.className = "visited";
           }
-        }, 10 * k);
+        }, 15 * k);
       }
       // if (queue[k] === this.state.ending) {
       //   setTimeout(function() {
@@ -696,7 +709,7 @@ export class TableContextProvider extends Component {
   };
 
   depthFirstSearch = () => {
-    let queue = ["15-59"];
+    let queue = ["17-79"];
     let path = {};
     let counter = 0;
     while (queue[counter] !== this.state.ending) {
@@ -710,7 +723,7 @@ export class TableContextProvider extends Component {
           break;
         }
       } catch (err) {
-        console.log(err);
+        // console.log(err);
         break;
       }
     }
@@ -721,13 +734,13 @@ export class TableContextProvider extends Component {
         setTimeout(function() {
           let cell = document.getElementById(queue[k]);
           cell.className = "visited";
-        }, 10 * k);
+        }, 15 * k);
       }
       if (queue[k] === this.state.ending) {
         setTimeout(function() {
           let cell = document.getElementById(queue[k]);
           cell.className = "ending-acquired";
-        }, 10 * k);
+        }, 15 * k);
       }
     }
   };
@@ -747,7 +760,7 @@ export class TableContextProvider extends Component {
           break;
         }
       } catch (err) {
-        console.log(err);
+        // console.log(err);
         break;
       }
     }
@@ -758,13 +771,13 @@ export class TableContextProvider extends Component {
         setTimeout(function() {
           let cell = document.getElementById(queue[k]);
           cell.className = "visited";
-        }, 10 * k);
+        }, 15 * k);
       }
       if (queue[k] === this.state.ending) {
         setTimeout(function() {
           let cell = document.getElementById(queue[k]);
           cell.className = "ending-acquired";
-        }, 10 * k);
+        }, 1 * k);
       }
     }
   };
@@ -1176,25 +1189,25 @@ export class TableContextProvider extends Component {
     knownHelper();
   };
 
-  changeEndpoint = e => {
-    // debugger;
-    let value = e.target.id;
-    if (!value) {
-      return;
-    }
-    if (value === this.state.starting || value === this.state.ending) {
-      return;
-    }
-    let nextEnding = document.getElementById(value);
-    // let ending = document.querySelector(`[data="${this.state.ending}"]`);
-    nextEnding.className = "ending";
-    // ending.className = "";
+  // changeEndpoint = e => {
+  //   // debugger;
+  //   let value = e.target.id;
+  //   if (!value) {
+  //     return;
+  //   }
+  //   if (value === this.state.starting || value === this.state.ending) {
+  //     return;
+  //   }
+  //   let nextEnding = document.getElementById(value);
+  //   // let ending = document.querySelector(`[data="${this.state.ending}"]`);
+  //   nextEnding.className = "ending";
+  //   // ending.className = "";
 
-    this.setState({
-      ending: value,
-      running: false
-    });
-  };
+  //   this.setState({
+  //     ending: value,
+  //     running: false
+  //   });
+  // };
 
   render() {
     return (

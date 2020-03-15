@@ -20,7 +20,7 @@ class Td extends React.Component {
       ending,
       current,
       wallConstructorOn,
-      wallConstructorOff,
+      // wallConstructorOff,
       wallBuilding
     } = this.props;
     // console.log(current);

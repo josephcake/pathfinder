@@ -64,7 +64,7 @@ class Nav extends React.Component {
                 </select>
               </div>
               <div className={"nav__wall nav__items"}>
-                <div className={"nav__wall_self"}>
+                {/* <div className={"nav__wall_self"}>
                   <h5>Build your own</h5>
                   <label className={"switch"}>
                     <input
@@ -74,7 +74,7 @@ class Nav extends React.Component {
                     />
                     <span className="slider round"></span>
                   </label>
-                </div>
+                </div> */}
                 <select
                   className={"nav__select"}
                   onChange={e => checkRunningFunc(buildMaze, e)}
