@@ -399,6 +399,9 @@ export class TableContextProvider extends Component {
     algorithms[selected]();
   };
 
+  // shortestPath = () =>{
+
+  // }
   bidirectionalSearch = () => {
     let startingQueue = [this.state.current];
     let endingQueue = [this.state.ending];
