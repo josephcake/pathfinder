@@ -6,6 +6,7 @@ import { SPIRAL_WALL } from "../Wall/SpiralWall";
 import { STAIR_WALL } from "../Wall/StairWall";
 import { TARGET_WALL } from "../Wall/TargetWall";
 import { CHECKER_WALL } from "../Wall/CheckerWall";
+import { FOREST_WALL } from "../Wall/ForestWall";
 
 export const TableContext = createContext();
 export class TableContextProvider extends Component {
@@ -112,7 +113,14 @@ export class TableContextProvider extends Component {
       this.setState({ running: false });
       return;
     }
-    const mazeType = ["basic", "spiral", "stair", "target", "checker"];
+    const mazeType = [
+      "basic",
+      "spiral",
+      "stair",
+      "target",
+      "checker",
+      "forest"
+    ];
     if (name === "random") {
       this.randomlyGeneratedMaze();
     } else if (name === "vertical") {
@@ -149,7 +157,8 @@ export class TableContextProvider extends Component {
         SPIRAL_WALL,
         STAIR_WALL,
         TARGET_WALL,
-        CHECKER_WALL
+        CHECKER_WALL,
+        FOREST_WALL
       ];
       const idx = mazeType.indexOf(name);
 

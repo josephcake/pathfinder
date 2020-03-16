@@ -97,6 +97,9 @@ class Nav extends React.Component {
                   <option className={"nav__select_option"} value={"checker"}>
                     Checker
                   </option>
+                  <option className={"nav__select_option"} value={"forest"}>
+                    Forest
+                  </option>
                   <option className={"nav__select_option"} value={"horizontal"}>
                     Horizontal Wide
                   </option>
