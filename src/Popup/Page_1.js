@@ -7,7 +7,7 @@ const Page_1 = ({ censored }) => {
         <React.Fragment>
           <h1 className={"intro-header"}>Welcome to F*ck The Duck!</h1>
           <h2 className={"intro-description"}>
-            The goal of this game is to find the duck and FUCK - IT - UP!!
+            The goal of this game is to find the duck and F*CK - IT - UP!!
           </h2>
         </React.Fragment>
       ) : (

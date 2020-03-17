@@ -22,7 +22,7 @@ class Nav extends React.Component {
                   onChange={e => selectAlgorithm(e)}
                 >
                   <option className={"nav__select_option"} value={"algorithm"}>
-                    Select An Algorithm
+                    Algorithm
                   </option>
 
                   <option
@@ -80,7 +80,7 @@ class Nav extends React.Component {
                   onChange={e => checkRunningFunc(buildMaze, e)}
                 >
                   <option className={"nav__select_option"} value={"maze"}>
-                    Build A Maze
+                    Maze
                   </option>
                   <option className={"nav__select_option"} value={"basic"}>
                     Basic
