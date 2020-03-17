@@ -5,15 +5,7 @@ class Nav extends React.Component {
   render() {
     return (
       <TableContext.Consumer>
-        {({
-          checkRunningFunc,
-          clearBoard,
-          toggleWall,
-          wallOn,
-          buildMaze,
-          selectAlgorithm,
-          go
-        }) => {
+        {({ checkRunningFunc, clearBoard, buildMaze, selectAlgorithm, go }) => {
           return (
             <div className={"nav"}>
               <div className={"nav__algo nav__items"}>

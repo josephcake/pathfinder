@@ -1229,7 +1229,6 @@ export class TableContextProvider extends Component {
           checkRunningFunc: this.checkRunningFunc,
           changeEndpoint: this.changeEndpoint,
           clearBoard: this.clearBoard,
-          toggleWall: this.toggleWall,
           wallConstructorOn: this.wallConstructorOn,
           wallConstructorOff: this.wallConstructorOff,
           wallBuilding: this.wallBuilding,
