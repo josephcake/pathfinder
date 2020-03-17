@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React, { useState } from "react";
 import Page_1 from "./Page_1";
 import Page_2 from "./Page_2";
@@ -7,7 +8,7 @@ import Page_5 from "./Page_5";
 import Page_6 from "./Page_6";
 import Page_7 from "./Page_7";
 
-const Intro = () => {
+const Intro = ({ setIntro }) => {
   const [count, setCount] = useState(0);
   const [censored, setCensorship] = useState(false);
   const pages = [
@@ -50,7 +51,9 @@ const Intro = () => {
 
         <div className={"intro-button-container"}>
           <div>
-            <button className={"intro-button"}>Close</button>
+            <button className={"intro-button"} onClick={() => setIntro(false)}>
+              Close
+            </button>
           </div>
           <div>
             <button className={"intro-button"} onClick={() => decrement()}>

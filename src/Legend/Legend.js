@@ -24,15 +24,15 @@ export const Legend = () => {
       <div className={"legend__section"}>
         <div className={"legend__item"}>
           <label className={"legend__item-label"}>Path :</label>
-          <td className={"legend__item-icon visited-legend"}></td>
+          <div className={"legend__item-icon visited-legend"}></div>
         </div>
         <div className={"legend__item"}>
           <label className={"legend__item-label"}>Wall :</label>
-          <td className={"legend__item-icon wall-legend"}></td>
+          <div className={"legend__item-icon wall-legend"}></div>
         </div>
         <div className={"legend__item"}>
           <label className={"legend__item-label"}>Unvisited :</label>
-          <td className={"legend__item-icon unvisited-legend"}></td>
+          <div className={"legend__item-icon unvisited-legend"}></div>
         </div>
       </div>
       <div className={"legend__section"}>

@@ -10,6 +10,7 @@ const Page_2 = ({ censored }) => {
             Ever heard of{" "}
             <a
               target={"_blank"}
+              rel="noopener noreferrer"
               href={"https://en.wikipedia.org/wiki/Rubber_duck_debugging"}
             >
               Rubber Duck Debugging?
@@ -25,6 +26,7 @@ const Page_2 = ({ censored }) => {
             Ever heard of{" "}
             <a
               target={"_blank"}
+              rel="noopener noreferrer"
               href={"https://en.wikipedia.org/wiki/Rubber_duck_debugging"}
             >
               Rubber Duck Debugging?

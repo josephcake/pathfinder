@@ -1,11 +1,18 @@
-import React from "react";
+import React, { useState } from "react";
+import Credits from "./Credits";
 
 const Footer = () => {
+  const [credit, setCredit] = useState(false);
+  const toggleCredit = () => {
+    setCredit(!credit);
+  };
   return (
     <div className={"footer"}>
       <div className={"footer__item"}>Joseph Cake</div>
       <div className={"footer__item"}>
         <a
+          rel="noopener noreferrer"
+          target={"_blank"}
           className={"link-tag linkedin"}
           href={"https://www.linkedin.com/in/jocake"}
         >
@@ -14,12 +21,18 @@ const Footer = () => {
       </div>
       <div className={"footer__item"}>
         <a
+          rel="noopener noreferrer"
+          target={"_blank"}
           className={"link-tag github"}
           href={"https://www.github.com/josephcake"}
         >
           Github
         </a>
       </div>
+      <div onClick={() => setCredit(true)} className={"footer__item"}>
+        Credits
+      </div>
+      {credit && <Credits setCredit={toggleCredit} />}
     </div>
   );
 };

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import "./App.css";
 import Main from "./Main/Main";
 import Nav from "./Nav/Nav";
@@ -7,13 +7,17 @@ import Intro from "./Popup/Intro";
 import { Legend } from "./Legend/Legend";
 
 function App() {
+  const [intro, setIntro] = useState(true);
+  const toggleIntro = () => {
+    setIntro(!intro);
+  };
   return (
     <div className="App">
       <Nav />
       <Legend />
       <Main />
       <Footer />
-      <Intro />
+      {intro && <Intro setIntro={toggleIntro} />}
     </div>
   );
 }
