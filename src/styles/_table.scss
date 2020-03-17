@@ -10,11 +10,11 @@ td {
   justify-content: center;
   align-items: center;
   border: solid 1px white;
-  width: 23px !important;
-  height: 23px !important;
+  width: 23px;
+  height: 23px;
   font-size: 0px;
   border-radius: 1px;
-  padding: 2px;
+  padding: 1px;
 }
 
 .starting {
@@ -127,5 +127,35 @@ td {
   100% {
     transform: scale(1);
     background-color: rgb(114, 77, 156);
+  }
+}
+@media only screen and (max-width: 1366px) {
+  td {
+    width: 15px;
+    height: 15px;
+  }
+}
+@media only screen and (max-width: 1025px) {
+  td {
+    width: 12px;
+    height: 12px;
+  }
+}
+@media only screen and (max-width: 768px) {
+  tr {
+    display: block;
+    float: left;
+  }
+  td {
+    display: block;
+    width: 10px;
+    height: 10px;
+  }
+}
+@media only screen and (max-width: 500px) {
+  td {
+    width: 6px;
+    height: 6px;
+    padding: 1px;
   }
 }

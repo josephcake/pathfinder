@@ -3,6 +3,7 @@
   padding: 10px;
   height: 80px;
   display: flex;
+  flex-wrap: wrap;
   flex-direction: row;
   justify-content: space-around;
   align-items: space-between;
@@ -63,5 +64,67 @@
     align-items: center;
     padding: 0 3px;
     margin: 0 3px;
+  }
+}
+@media only screen and (max-width: 768px) {
+  .nav {
+    padding: 10px;
+    height: 60px;
+    justify-content: space-between;
+    align-items: space-between;
+    &__button {
+      font-weight: 600;
+      padding: 0 2px;
+      margin: 0 1px;
+      &.go {
+        width: 80px;
+        font-size: 1.3rem;
+        padding: 0 5px;
+      }
+    }
+    &__select {
+      font-weight: 600;
+      font-size: 1rem;
+      padding: 0 5px;
+      &_option {
+        font-size: 1rem;
+        font-weight: 600;
+      }
+    }
+    &__wall_self {
+      padding: 0 1px;
+      margin: 0 1px;
+    }
+  }
+}
+@media only screen and (max-width: 500px) {
+  .nav {
+    padding: 10px;
+    height: auto;
+    justify-content: space-between;
+    align-items: space-between;
+    &__button {
+      font-weight: 600;
+      padding: 0 2px;
+      margin: 0 1px;
+      &.go {
+        width: 60px;
+        font-size: 1rem;
+        padding: 0 2px;
+      }
+    }
+    &__select {
+      font-weight: 600;
+      font-size: 0.7rem;
+      padding: 0 1px;
+      &_option {
+        font-size: 0.7rem;
+        font-weight: 600;
+      }
+    }
+    &__wall_self {
+      padding: 0 1px;
+      margin: 0;
+    }
   }
 }
