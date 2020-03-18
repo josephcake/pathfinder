@@ -20,7 +20,7 @@ const Page_1 = ({ censored }) => {
         </React.Fragment>
       )}
 
-      <div>
+      <div className={"page-image-container"}>
         <img
           className={"page-image"}
           src={require("../Images/duck.png")}

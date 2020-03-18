@@ -72,6 +72,52 @@
     margin: 0 3px;
   }
 }
+@media only screen and (max-height: 850px) {
+  .nav {
+    height: 40px;
+    padding: 0;
+    align-items: center;
+    &-image {
+      height: 25px;
+      width: 25px;
+    }
+    &__button {
+      &.go {
+        width: 80px;
+        font-size: 1.5rem;
+      }
+    }
+    &__select {
+      font-size: 0.8rem;
+
+      &_option {
+        font-size: 0.8rem;
+      }
+    }
+  }
+}
+@media only screen and (max-height: 650px) {
+  .nav {
+    height: 30px;
+    // padding: 0;
+    // align-items: center;
+    &-image {
+      height: 16px;
+      width: 16px;
+    }
+    &__button {
+      &.go {
+        font-size: 1rem;
+      }
+    }
+    &__select {
+      font-size: 0.5rem;
+      &_option {
+        font-size: 0.5rem;
+      }
+    }
+  }
+}
 @media only screen and (max-width: 768px) {
   .nav {
     justify-content: space-between;

@@ -23,10 +23,16 @@
   // }
 }
 
+@media only screen and (max-height: 850px) {
+  .footer {
+    height: 30px;
+    font-size: 10px;
+    font-weight: 100;
+  }
+}
 @media only screen and (max-width: 500px) {
   .footer {
     font-size: 10px;
     font-weight: 100;
-    // display: none;
   }
 }
