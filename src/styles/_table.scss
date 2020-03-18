@@ -130,20 +130,46 @@ td {
     background-color: rgb(114, 77, 156);
   }
 }
-@media only screen and (max-height: 850px) {
+@media only screen and (max-height: 900px) {
   td {
-    // padding: 0 5px;
-    // margin: 0.5px 2px;
-    width: 15px;
-    height: 15px;
+    width: 19px;
+    height: 19px;
   }
 }
 @media only screen and (max-height: 850px) {
   td {
-    // padding: 0 5px;
-    // margin: 0.5px 2px;
+    width: 18px;
+    height: 18px;
+  }
+}
+@media only screen and (max-height: 750px) {
+  td {
+    width: 16px;
+    height: 16px;
+  }
+}
+@media only screen and (max-height: 650px) {
+  td {
+    width: 14px;
+    height: 14px;
+  }
+}
+@media only screen and (max-height: 550px) {
+  td {
     width: 12px;
     height: 12px;
+  }
+}
+@media only screen and (max-height: 500px) {
+  td {
+    width: 10px;
+    height: 10px;
+  }
+}
+@media only screen and (max-height: 450px) {
+  td {
+    width: 9px;
+    height: 9px;
   }
 }
 @media only screen and (max-width: 1366px) {
