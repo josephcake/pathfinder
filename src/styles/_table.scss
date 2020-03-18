@@ -1,5 +1,6 @@
 table {
   border-collapse: collapse;
+  border: solid 2px darkslateblue;
 }
 tr {
   display: flex;
@@ -10,8 +11,8 @@ td {
   justify-content: center;
   align-items: center;
   border: solid 1px white;
-  width: 23px;
-  height: 23px;
+  width: 21px;
+  height: 21px;
   font-size: 0px;
   border-radius: 1px;
   padding: 1px;
@@ -20,8 +21,8 @@ td {
 .starting {
   // background-color: rgb(151, 125, 151);
   background-color: rgb(233, 76, 14);
-  transform: rotate(90deg);
-  background-image: url("../Images/bullet.png");
+  // transform: rotate(90deg);
+  background-image: url("../Images/feathered-arrow.png");
   background-size: contain;
   background-position: center;
   border-radius: 10%;

@@ -13,7 +13,7 @@ function App() {
   };
   return (
     <div className="App">
-      <Nav />
+      <Nav setIntro={toggleIntro} />
       <Legend />
       <Main />
       <Footer />

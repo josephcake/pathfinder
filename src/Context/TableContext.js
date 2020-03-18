@@ -82,7 +82,7 @@ export class TableContextProvider extends Component {
   };
 
   wallBuilding = e => {
-    if (this.state.building) {
+    if (this.state.building && !this.state.running) {
       let id = e.target.id;
       if (
         String(id) === this.state.starting ||

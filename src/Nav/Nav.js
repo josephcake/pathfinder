@@ -9,6 +9,14 @@ class Nav extends React.Component {
           return (
             <div className={"nav"}>
               <div className={"nav__algo nav__items"}>
+                <img
+                  onClick={this.props.setIntro}
+                  className={"nav-image"}
+                  src={require("../Images/duck.png")}
+                  alt={"Duck"}
+                />
+              </div>
+              <div className={"nav__algo nav__items"}>
                 <select
                   className={"nav__select"}
                   onChange={e => selectAlgorithm(e)}

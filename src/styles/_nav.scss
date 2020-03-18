@@ -1,7 +1,7 @@
 .nav {
   border: solid 1px black;
   padding: 10px;
-  height: 80px;
+  height: 60px;
   display: flex;
   flex-wrap: wrap;
   flex-direction: row;
@@ -9,6 +9,12 @@
   align-items: space-between;
   background-color: darkslateblue;
   font-family: "Bree Serif";
+  &-image {
+    height: 40px;
+    width: 40px;
+    filter: brightness(10);
+    cursor: pointer;
+  }
   &__items {
     display: flex;
     flex-direction: row;
@@ -68,8 +74,6 @@
 }
 @media only screen and (max-width: 768px) {
   .nav {
-    padding: 10px;
-    height: 60px;
     justify-content: space-between;
     align-items: space-between;
     &__button {

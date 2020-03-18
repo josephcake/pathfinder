@@ -5,10 +5,10 @@ export const Legend = () => {
     <div className={"legend"}>
       <div className={"legend__section"}>
         <div className={"legend__item"}>
-          <label className={"legend__item-label"}>Bullet :</label>
+          <label className={"legend__item-label"}>Arrow :</label>
           <img
             className={"legend__item-icon bullet"}
-            src={require("../Images/bullet.png")}
+            src={require("../Images/feathered-arrow.png")}
             alt={"Bullet"}
           />
         </div>
